@@ -1,0 +1,1 @@
+type	motif	valueSNP	+	25SNP	-	21Indel	+	2Indel	-	5Multi	+	1Multi	-	1CNV	-	5Unk	?	9
