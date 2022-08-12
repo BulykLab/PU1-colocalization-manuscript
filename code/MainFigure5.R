@@ -66,7 +66,9 @@ ggplot2::ggsave('../figures/Fig5_a.pdf',
 
 
 ## Figure 5c - rs5827412 MPRA
-rs5827412_MPRA <- data.frame(source=as.factor(c("Tewhey2016", "Abell2022")), logSkew=c(-0.390574802, -0.342679482),logSkewSE=c(0.09816138,0.307302851))
+#rs5827412_MPRA <- data.frame(source=as.factor(c("Tewhey2016", "Abell2022")), logSkew=c(-0.390574802, -0.342679482),logSkewSE=c(0.09816138,0.307302851))
+
+rs5827412_mpra <- read.csv('../data/Fig5/rs5827412_mpra.txt', header=T, sep='\t')
 
 p_rs5827412_mpra <- ggplot(rs5827412_MPRA, aes(x= source, y = logSkew, ymin=logSkew-1.96*logSkewSE, ymax=logSkew+1.96*logSkewSE)) +
   geom_col(fill="gray", color="black") +
@@ -119,23 +121,56 @@ p_lrrc25_rna_mono_diff <- LRRC25_RNA %>% filter(celltype %in% c("HSC", "MPP", "C
 p_5_cde <- p_rs5827412_mpra + p_pu1ko + p_lrrc25_rna_mono_diff + plot_layout(ncol=3, widths = c(1,1,1.4))
 
 
-ggplot2::ggsave('~/Google Drive/Manuscript/PU1_bloodcelltrait/figures/Fig5_cde.pdf',
+ggplot2::ggsave('../figures/Fig5_cde.pdf',
                 plot = p_5_cde,
                 device='pdf',
                 width=250, height=75, units="mm")
 
 
 #### Figure 5f,g - LRRC25 eQTL (monocyte) and gene plot
-### Gene plot
 
+# Common coordinate for 5f,g
 chr <- "19"
-#start <- 18450000
-#end <- 18550000
-
 start <- 18495845
 end <- 18529789
 
 
+## LRRC25 eQTL plot
+bp_lrrc25_file="../data/Fig5/blueprint.LRRC25.eQTL.txt"
+bp_lrrc25_stat <- read.csv(bp_lrrc25_file, header=T, sep='\t')
+#colnames(bp_lrrc25_stat) <- c("chr", "pos", "rsid", "pval", "beta")
+
+bp_lrrc25_stat <- bp_lrrc25_stat %>% filter(pos >= start & pos < end)
+
+## Defining shape depending on estimated effect direction
+shape = ifelse(bp_lrrc25_stat$pval > 1e-3, 21, ifelse(bp_lrrc25_stat$beta > 0, 24, 25))
+names(shape) = bp_lrrc25_stat$rsid
+
+snp = 'rs5827412'
+size = ifelse(bp_lrrc25_stat$rsid == snp, 3, 2)
+names(size) = bp_lrrc25_stat$rsid
+
+
+p_bp_lrrc25 <- ggplot(bp_lrrc25_stat) +
+  geom_point(aes(x=pos, y=-log10(pval)), shape=shape, fill="#FF7373",size =size) +
+  scale_fill_manual(values = color, guide = "none") +
+  scale_shape_manual(values = shape, guide = "none") +
+  scale_size_manual(values = size, guide = "none") +
+  scale_x_continuous(labels=function(x){sprintf('%.2f',x/1e6)}, expand = expansion(mult = c(0, 0)), limit=c(start,end)) +
+  geom_vline(xintercept = 18512817, linetype=2) +
+  ylab(expression(paste(-log[10],"(",italic(p),")"))) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  theme_classic() +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.y = element_text(size=14),
+        plot.title = element_text(
+          hjust = 1e-2,
+          margin = margin(b = -12 * (stringr::str_count(title, "\n") + 1))))
+
+
+
+### Figure 5g - LRRC25 Gene plot
 txdb <- AnnotationDbi::loadDb("../data/misc/txdb_v19_hg19.sqlite")
 gr = GenomicRanges::GRanges(seqnames = "chr19", ranges = IRanges(start, end))
 
@@ -162,106 +197,10 @@ p_lrrc25 <- ggplot() + theme_classic() +
   geom_point(aes(x=18512817, y=1), shape=23, size=3, fill="purple")
 
 
-##
-bp_lrrc25_file="~/Google Drive/Manuscript/PU1_bloodcelltrait/data/LRRC25/blueprint.LRRC25.eQTL.txt"
-ld_file="~/Google Drive/Manuscript/PU1_bloodcelltrait/data/LRRC25/rs5827412.ld.txt"
-bp_lrrc25_stat <- read.table(bp_lrrc25_file, header=F)
-colnames(bp_lrrc25_stat) <- c("chr", "pos", "rsid", "pval", "beta")
 
-bp_lrrc25_stat <- bp_lrrc25_stat %>% filter(pos >= start & pos < end)
+p_5_fg <- p_bp_lrrc25 + p_lrrc25 + plot_layout(nrow=2, heights = c(2,1))
 
-shape = ifelse(bp_lrrc25_stat$pval > 1e-3, 21, ifelse(bp_lrrc25_stat$beta > 0, 24, 25))
-names(shape) = bp_lrrc25_stat$rsid
-
-snp = 'rs5827412'
-size = ifelse(bp_lrrc25_stat$rsid == snp, 3, 2)
-names(size) = bp_lrrc25_stat$rsid
-
-#color = ifelse(bp_lrrc25_stat$rsid == snp, 'purple', "#FF7373")
-#names(color) = bp_lrrc25_stat$rsid
-
-ld = read.table(ld_file, header=T)
-
-color = assign_color2(bp_lrrc25_stat$rsid, snp, ld)
-names(color) = bp_lrrc25_stat$rsid
-
-
-p_bp_lrrc25 <- ggplot(bp_lrrc25_stat) +
-  geom_point(aes(x=pos, y=-log10(pval)), shape=shape, fill="#FF7373",size =size) +
-  scale_fill_manual(values = color, guide = "none") +
-  scale_shape_manual(values = shape, guide = "none") +
-  scale_size_manual(values = size, guide = "none") +
-  scale_x_continuous(labels=function(x){sprintf('%.2f',x/1e6)}, expand = expansion(mult = c(0, 0)), limit=c(start,end)) +
-  geom_vline(xintercept = 18512817, linetype=2) +
-  ylab(expression(paste(-log[10],"(",italic(p),")"))) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-  theme_classic() +
-  theme(axis.title.x = element_blank(),
-        axis.text.x = element_blank(),
-        axis.title.y = element_text(size=14),
-        plot.title = element_text(
-          hjust = 1e-2,
-          margin = margin(b = -12 * (stringr::str_count(title, "\n") + 1))))
-
-
-
-p_5_f <- p_bp_lrrc25 + p_lrrc25 + plot_layout(nrow=2, heights = c(2,1))
-
-ggplot2::ggsave('~/Google Drive/Manuscript/PU1_bloodcelltrait/figures/Fig5_f.pdf',
-                plot = p_5_f,
+ggplot2::ggsave('../figures/Fig5_fg.pdf',
+                plot = p_5_fg,
                 device='pdf',
                 width=200, height=72, units="mm")
-
-
-
-
-
-## ALTERNATE - colocalization plot with - log 10 p values
-
-gwas_file="~/Google Drive/Manuscript/PU1_bloodcelltrait/data/LRRC25/mono_p.LRRC25.filtered.txt"
-pu1_file="~/Google Drive/Manuscript/PU1_bloodcelltrait/data/LRRC25/PU1_71930.bqtl.filtered.txt"
-ld_file="~/Google Drive/Manuscript/PU1_bloodcelltrait/data/LRRC25/rs5827412.ld.txt"
-snp = 'rs5827412'
-
-gwas_stat <- read.table(gwas_file, header=F)
-colnames(gwas_stat) <- c("rsid", "chr", "pos", "pval")
-pu1_stat <- read.table(pu1_file, header=F)
-colnames(pu1_stat) <- c("rsid", "chr", "pos", "pval")
-
-merged_stat <- merge(gwas_stat, pu1_stat, by=c("rsid", "pos"))
-
-
-ld = read.table(ld_file, header=T)
-
-color = assign_color2(merged_stat$rsid, snp, ld)
-
-shape = ifelse(merged_stat$rsid == snp, 23, 21)
-names(shape) = merged_stat$rsid
-
-size = ifelse(merged_stat$rsid == snp, 3, 2)
-names(size) = merged_stat$rsid
-
-
-
-
-p_5_b <- ggplot(merged_stat) + geom_point(aes(x=-log10(pval.x), y=-log10(pval.y), fill = rsid, size = rsid, shape = rsid)) +
-  theme_minimal() +
-  scale_fill_manual(values = color, guide = "none") +
-  scale_shape_manual(values = shape, guide = "none") +
-  scale_size_manual(values = size, guide = "none") +
-  xlab(expression(paste(-log[10],"(",italic(p)["Mono %"],")"))) +
-  ylab(expression(paste(-log[10],"(",italic(p)["PU.1 bQTL"],")"))) +
-  theme(aspect.ratio = 1,
-        axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14))
-
-p_5_b
-
-geom_point(data=merged_stat %>% filter(rsid == snp), aes(x=-log10(pval.x), y=-log10(pval.y)), shape=23, size=3, fill="purple")
-
-ggplot2::ggsave('~/Google Drive/Manuscript/PU1_bloodcelltrait/figures/Fig5_b.pdf',
-                plot = p_5_b,
-                device='pdf',
-                width=110, height=100, units="mm")
-
-ggrepel::geom_text_repel(data=merged_stat %>% filter(rsid == snp), aes(label=label, x=-log10(pval.x), y=-log10(pval.y)), max.overlaps = Inf)
