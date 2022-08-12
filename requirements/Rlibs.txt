@@ -2,4 +2,9 @@ ggplot2
 dplyr
 cowplot
 forcats
-patchworks
+patchwork
+data.table
+AnnotationDbi
+Ggbio
+GenomicRanges
+locuscomparer
