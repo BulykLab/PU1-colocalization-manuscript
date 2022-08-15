@@ -212,41 +212,7 @@ p_bcell_eqtl <- p_bcell_eqtl + geom_vline(xintercept = 124341259, linetype=2) + 
   geom_point(aes(x=124341259, y=bcell_eqtl_stat[bcell_eqtl_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") + labs(title = title)
 
 
-## Adding r2 legend
 
-legend_box = data.frame(x = 0.8, y = seq(0.8, 0.4, -0.1))
-
-
-p_pu1_r2 <- ggdraw(p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element_blank())) +
-  theme(aspect.ratio=1/5) +
-  geom_rect(data = legend_box,
-            aes(xmin = x+0.08, xmax = x + 0.1, ymin = y, ymax = y + 0.1),
-            color = "black",
-            fill = rev(c("navy", "lightskyblue", "green", "orange", "red"))) +
-  draw_label("1", x = legend_box$x[1] + 0.1, y = legend_box$y[1]+0.1, hjust = -0.7, size = 12) +
-  draw_label("0.8", x = legend_box$x[1] + 0.1, y = legend_box$y[1], hjust = -0.3, size = 12) +
-  draw_label("0.6", x = legend_box$x[2] + 0.1, y = legend_box$y[2], hjust = -0.3, size = 12) +
-  draw_label("0.4", x = legend_box$x[3] + 0.1, y = legend_box$y[3], hjust = -0.3, size = 12) +
-  draw_label("0.2", x = legend_box$x[4] + 0.1, y = legend_box$y[4], hjust = -0.3, size = 12) +
-  draw_label("0", x = legend_box$x[5] + 0.1, y = legend_box$y[5], hjust = -0.7, size = 12) +
-  draw_label(parse(text = "r^2"), x = legend_box$x[1]+0.0875, y = legend_box$y[1]+0.01, vjust = -1.75, size = 14)
-
-
-
-r2_panel <- ggplot() +
-  geom_rect(data = legend_box,
-            aes(xmin = x, xmax = x + 0.1, ymin = y, ymax = y + 0.1),
-            color = "black",
-            fill = rev(c("navy", "lightskyblue", "green", "orange", "red"))) +
-  draw_label("1", x = legend_box$x[1] + 0.1, y = legend_box$y[1]+0.1, hjust = -0.7, size = 14) +
-  draw_label("0.8", x = legend_box$x[1] + 0.1, y = legend_box$y[1], hjust = -0.3, size = 14) +
-  draw_label("0.6", x = legend_box$x[2] + 0.1, y = legend_box$y[2], hjust = -0.3, size = 14) +
-  draw_label("0.4", x = legend_box$x[3] + 0.1, y = legend_box$y[3], hjust = -0.3, size = 14) +
-  draw_label("0.2", x = legend_box$x[4] + 0.1, y = legend_box$y[4], hjust = -0.3, size = 14) +
-  draw_label("0", x = legend_box$x[5] + 0.1, y = legend_box$y[5], hjust = -0.7, size = 14) +
-  draw_label(parse(text = "r^2"), x = legend_box$x[1]+0.06, y = legend_box$y[1]+0.01, vjust = -1.6, size = 14) +
-  xlim(c(0,1)) + ylim(c(0,1)) +
-  theme_void() + theme(aspect.ratio=1)
 
 
 

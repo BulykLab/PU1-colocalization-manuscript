@@ -25,9 +25,9 @@ jlim_v_coloc["jlimp"] <- ifelse(jlim_v_coloc$jlim_p == 0, 1/(10^5+1), jlim_v_col
 ### scatter plot of significance ###
 p_2a <- ggplot(jlim_v_coloc) + theme_classic() +
   geom_hline(yintercept = 0.5, linetype = 2) + geom_vline(xintercept = -log10(jlim_threshold), linetype = 2) +
-  geom_rect(xmin=-log10(jlim_threshold), xmax=5.28, ymin=0.5, ymax=1.02, fill="#FFF4C0", alpha=0.01) +
+  geom_rect(xmin=-log10(jlim_threshold), xmax=5.15, ymin=0.5, ymax=1.02, fill="#FFF4C0", alpha=0.01) +
   geom_point(aes(x=-log10(jlimp), y = coloc_H4, color = status), alpha=1) +
-  geom_rect(xmin=-log10(jlim_threshold), xmax=5.28, ymin=0.5, ymax=1.02, fill="#FFF4C0", alpha=0, color='black', size=1.1) +
+  geom_rect(xmin=-log10(jlim_threshold), xmax=5.15, ymin=0.5, ymax=1.02, fill="#FFF4C0", alpha=0, color='black', size=1.1) +
   scale_color_manual("Significance", values = c('red', 'orange', 'skyblue', 'gray'), labels=c("Both", "Coloc only", "JLIM only", "Neither")) +
   xlab(expression(paste(-log[10],"(JLIM ",italic(p),")"))) + ylab("Coloc PP(Colocalization)") +
   theme(axis.title.x = element_text(size=18), axis.title.y = element_text(size=18),
