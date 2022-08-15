@@ -70,7 +70,7 @@ ggplot2::ggsave('../figures/Fig5_a.pdf',
 
 rs5827412_mpra <- read.csv('../data/Fig5/rs5827412_mpra.txt', header=T, sep='\t')
 
-p_rs5827412_mpra <- ggplot(rs5827412_MPRA, aes(x= source, y = logSkew, ymin=logSkew-1.96*logSkewSE, ymax=logSkew+1.96*logSkewSE)) +
+p_rs5827412_mpra <- ggplot(rs5827412_mpra, aes(x= source, y = logSkew, ymin=logSkew-1.96*logSkewSE, ymax=logSkew+1.96*logSkewSE)) +
   geom_col(fill="gray", color="black") +
   theme_classic() + scale_x_discrete(position='top') +
   geom_errorbar(color = "black", width = 0.2) +
@@ -79,8 +79,6 @@ p_rs5827412_mpra <- ggplot(rs5827412_MPRA, aes(x= source, y = logSkew, ymin=logS
         axis.text.x = element_text(size=12), axis.text.y = element_text(size=14),
         aspect.ratio = 1.1) +
   geom_hline(yintercept=0, size=1) + ylab("rs5827412 \n allelic skew")
-
-p_rs5827412_mpra
 
 
 ### Figure 5d - PU1KO
@@ -127,6 +125,8 @@ ggplot2::ggsave('../figures/Fig5_cde.pdf',
                 width=250, height=75, units="mm")
 
 
+
+
 #### Figure 5f,g - LRRC25 eQTL (monocyte) and gene plot
 
 # Common coordinate for 5f,g
@@ -150,9 +150,10 @@ snp = 'rs5827412'
 size = ifelse(bp_lrrc25_stat$rsid == snp, 3, 2)
 names(size) = bp_lrrc25_stat$rsid
 
+print("I'm here okay right before eqtl plot")
 
 p_bp_lrrc25 <- ggplot(bp_lrrc25_stat) +
-  geom_point(aes(x=pos, y=-log10(pval)), shape=shape, fill="#FF7373",size =size) +
+  geom_point(aes(x=pos, y=-log10(pval)), shape=shape, fill="#FF7373",size=size) +
   scale_fill_manual(values = color, guide = "none") +
   scale_shape_manual(values = shape, guide = "none") +
   scale_size_manual(values = size, guide = "none") +
@@ -163,16 +164,15 @@ p_bp_lrrc25 <- ggplot(bp_lrrc25_stat) +
   theme_classic() +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(),
-        axis.title.y = element_text(size=14),
-        plot.title = element_text(
-          hjust = 1e-2,
-          margin = margin(b = -12 * (stringr::str_count(title, "\n") + 1))))
+        axis.title.y = element_text(size=14))
 
 
 
 ### Figure 5g - LRRC25 Gene plot
 txdb <- AnnotationDbi::loadDb("../data/misc/txdb_v19_hg19.sqlite")
 gr = GenomicRanges::GRanges(seqnames = "chr19", ranges = IRanges(start, end))
+
+print("I'm here okay right after loading txdb")
 
 p_lrrc25 <- ggplot() + theme_classic() +
   geom_alignment(

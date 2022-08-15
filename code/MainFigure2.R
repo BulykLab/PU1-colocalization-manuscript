@@ -8,7 +8,7 @@ library(patchwork, quietly = TRUE)
 #### Figure 2a - JLIM vs Coloc scatterplot ####
 
 # Reading JLIM and Coloc results
-jlim_v_coloc <- read.csv('../data/Fig2/JLIM_COLOC.all.stat.txt', header = F, sep ='\t')
+jlim_v_coloc <- read.csv('../data/Fig2/JLIM_COLOC.all.stat.txt', header = T, sep ='\t')
 
 ## FDR threshold for JLIM statistics
 # (0.01172 * 1621) / sum(jlim_v_coloc$jlimp < 0.01172) ~ 0.05
@@ -16,17 +16,17 @@ jlim_v_coloc <- read.csv('../data/Fig2/JLIM_COLOC.all.stat.txt', header = F, sep
 jlim_threshold <- 0.01172
 
 # Determining statistical significance
-jlim_v_coloc["jlim"] <- ifelse(jlim_v_coloc$V11 <=  jlim_threshold, 1, 0)
-jlim_v_coloc["coloc"] <- ifelse(jlim_v_coloc$V17 >= 0.5, 1, 0)
+jlim_v_coloc["jlim"] <- ifelse(jlim_v_coloc$jlim_p <=  jlim_threshold, 1, 0)
+jlim_v_coloc["coloc"] <- ifelse(jlim_v_coloc$coloc_H4 >= 0.5, 1, 0)
 jlim_v_coloc["status"] <- ifelse(jlim_v_coloc$jlim & jlim_v_coloc$coloc, "both", ifelse(jlim_v_coloc$jlim & !jlim_v_coloc$coloc,"jlim_only", ifelse(jlim_v_coloc$coloc, "coloc_only", "neither")))
-jlim_v_coloc["jlimp"] <- ifelse(jlim_v_coloc$V11 == 0, 10^(-5.1), jlim_v_coloc$V11)
+jlim_v_coloc["jlimp"] <- ifelse(jlim_v_coloc$jlim_p == 0, 1/(10^5+1), jlim_v_coloc$jlim_p)
 
 
 ### scatter plot of significance ###
 p_2a <- ggplot(jlim_v_coloc) + theme_classic() +
   geom_hline(yintercept = 0.5, linetype = 2) + geom_vline(xintercept = -log10(jlim_threshold), linetype = 2) +
   geom_rect(xmin=-log10(jlim_threshold), xmax=5.28, ymin=0.5, ymax=1.02, fill="#FFF4C0", alpha=0.01) +
-  geom_point(aes(x=-log10(jlimp), y = V17, color = status), alpha=1) +
+  geom_point(aes(x=-log10(jlimp), y = coloc_H4, color = status), alpha=1) +
   geom_rect(xmin=-log10(jlim_threshold), xmax=5.28, ymin=0.5, ymax=1.02, fill="#FFF4C0", alpha=0, color='black', size=1.1) +
   scale_color_manual("Significance", values = c('red', 'orange', 'skyblue', 'gray'), labels=c("Both", "Coloc only", "JLIM only", "Neither")) +
   xlab(expression(paste(-log[10],"(JLIM ",italic(p),")"))) + ylab("Coloc PP(Colocalization)") +
