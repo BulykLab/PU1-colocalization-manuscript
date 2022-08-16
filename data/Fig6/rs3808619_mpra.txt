@@ -1,0 +1,3 @@
+source	logSkew	logSkewSE
+Tewhey2016	0.4418276	0.1612375
+Abell2022	1.3668866	0.3397127

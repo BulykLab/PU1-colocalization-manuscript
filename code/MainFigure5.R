@@ -150,7 +150,6 @@ snp = 'rs5827412'
 size = ifelse(bp_lrrc25_stat$rsid == snp, 3, 2)
 names(size) = bp_lrrc25_stat$rsid
 
-print("I'm here okay right before eqtl plot")
 
 p_bp_lrrc25 <- ggplot(bp_lrrc25_stat) +
   geom_point(aes(x=pos, y=-log10(pval)), shape=shape, fill="#FF7373",size=size) +
@@ -172,7 +171,6 @@ p_bp_lrrc25 <- ggplot(bp_lrrc25_stat) +
 txdb <- AnnotationDbi::loadDb("../data/misc/txdb_v19_hg19.sqlite")
 gr = GenomicRanges::GRanges(seqnames = "chr19", ranges = IRanges(start, end))
 
-print("I'm here okay right after loading txdb")
 
 p_lrrc25 <- ggplot() + theme_classic() +
   geom_alignment(
