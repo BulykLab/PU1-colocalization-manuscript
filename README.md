@@ -20,3 +20,4 @@ Rscript MainFigure2.R   # or any other code in the directory
 
 ### Note
 - Genome track images of PU.1 ChIP-seq, ATAC-seq, etc. were generated using <a href="https://software.broadinstitute.org/software/igv/">IGV browser</a>.
+- Fuji plot in Figure 3 was generated using code from <a href="https://github.com/mkanai/fujiplot">Masahiro Kanai</a>.
