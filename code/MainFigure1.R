@@ -63,17 +63,7 @@ p_1c <- ggplot(pu1_gkmsvm, aes(x=V14-V13, y=V17, color=-log10(V18))) +
 
 
 
-
-
-
-
 ## Figure 1d  --  Number of motif-altering variants at the center of peak
-
-## number of motif-altering variants by location
-#location_number <- data.frame(location = rep(c('Center 50bp', 'Elsewhere'),2),
-#                              pu1motif = c(rep('motif',2), rep('none', 2)),
-#                              number = c(316,38,453,241))
-
 motif_location <- read.csv('../data/Fig1/motif_location.txt', header=T, sep='\t')
 
 p_1d <- motif_location %>% mutate(pu1motif = factor(pu1motif, levels=c("none","motif"))) %>%
