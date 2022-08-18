@@ -21,3 +21,4 @@ Rscript MainFigure2.R   # or any other code in the directory
 ### Note
 - Genome track images of PU.1 ChIP-seq, ATAC-seq, etc. were generated using <a href="https://software.broadinstitute.org/software/igv/">IGV browser</a>.
 - Fuji plot in Figure 3 was generated using code from <a href="https://github.com/mkanai/fujiplot">Masahiro Kanai</a>.
+- The <a href="https://github.com/BulykLab/PU1-colocalization-manuscript/blob/main/figures/r2_panel.pdf">legend for colors reflecting LD with selected variants</a> were added individually.
