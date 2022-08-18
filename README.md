@@ -18,3 +18,5 @@ cd PU1-colocalization-manuscript/codes
 Rscript MainFigure2.R   # or any other code in the directory
 ```
 
+### Note
+- Genome track images of PU.1 ChIP-seq, ATAC-seq, etc. were generated using <a href="https://software.broadinstitute.org/software/igv/">IGV browser</a>.
