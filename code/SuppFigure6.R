@@ -16,8 +16,8 @@ rs411_ATAC_noPU1 <- read.table("../data/SuppFig6/rs411_ATAC.noPU1.bed", header=F
 p_atac_pu1 <- ggplot(data=res_pu1ko[rownames(res_pu1ko) %in% rs411_ATAC_PU1$V4,]) +
   geom_hline(yintercept = 0, alpha=0.5, ) +
   geom_point(aes(x=baseMean, y=log2FoldChange, color=(padj < 0.05)), size = 0.5) +
-  scale_x_continuous(trans='log10', limits = c(3,2000) ) +
-  scale_y_continuous(limits = c(-5,5) ) +
+  scale_x_continuous(trans='log10', limits = c(1,23000) ) +
+  scale_y_continuous(limits = c(-7.1,7.1) ) +
   scale_color_manual(values = c("gray", "red")) +
   theme_classic() +
   theme(legend.position = 'none', axis.title = element_text(size=14),
@@ -28,8 +28,8 @@ p_atac_pu1 <- ggplot(data=res_pu1ko[rownames(res_pu1ko) %in% rs411_ATAC_PU1$V4,]
 p_atac_nopu1 <- ggplot(data=res_pu1ko[rownames(res_pu1ko) %in% rs411_ATAC_noPU1$V4,]) +
   geom_hline(yintercept = 0, alpha=0.5, ) +
   geom_point(aes(x=baseMean, y=log2FoldChange, color=(padj < 0.05)), size = 0.5) +
-  scale_x_continuous(trans='log10', limits = c(3,2000) ) +
-  scale_y_continuous(limits = c(-5,5) ) +
+  scale_x_continuous(trans='log10', limits = c(1,23000) ) +
+  scale_y_continuous(limits = c(-7.1,7.1) ) +
   scale_color_manual(values = c("gray", "red")) +
   theme_classic() +
   theme(legend.position = 'none', axis.title = element_text(size=14),
