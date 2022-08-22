@@ -193,7 +193,7 @@ bcell_eqtl_stat = read_metal(bcell_eqtl_file, marker_col = 'rsid', pval_col = 'p
 bcell_eqtl_stat = get_position(bcell_eqtl_stat)
 snp = 'rs12517864'
 ld = retrieve_LD(chr, snp, population)
-color = assign_color(bcell_eqtl_stat$rsid, snp, ld)
+color = assign_color2(bcell_eqtl_stat$rsid, snp, ld)
 
 shape = ifelse(bcell_eqtl_stat$rsid == snp, 23, 21)
 names(shape) = bcell_eqtl_stat$rsid

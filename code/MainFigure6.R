@@ -49,9 +49,6 @@ p_zc2hc1a <- ggplot() + theme_classic() +
 
 
 
-
-
-
 ## PU1_40678
 pu1_file = "../data/Fig6/PU1_40678.pu1bqtl.metal.txt"
 pu1_stat = read_metal(pu1_file, marker_col = 'rsid', pval_col = 'pval')
