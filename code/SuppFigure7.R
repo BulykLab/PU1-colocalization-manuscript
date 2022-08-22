@@ -7,6 +7,7 @@ library(patchwork)
 source("misc/locuscompare_updated.R")
 
 
+## Supp Fig. 7a - Merged association plot
 
 ## Supp - MS GWAS
 ms_2013_file = "../data/SuppFig7/ZC2HC1A_MS_2013.metal.txt"
@@ -33,41 +34,6 @@ size = ifelse(merged$rsid == snp, 3, 2)
 names(size) = merged$rsid
 
 merged$label = ifelse(merged$rsid == snp, merged$rsid, '')
-
-
-
-#merged_stat <- merge(gwas_stat, pu1_stat, by=c("rsid", "pos"))
-
-#chr = '8'
-#snp = 'rs3808619'
-#population = 'EUR'
-#ld = retrieve_LD(chr, snp, population)
-
-#color = assign_color2(merged_stat$rsid, snp, ld)
-
-#shape = ifelse(merged_stat$rsid == snp, 23, 21)
-#names(shape) = merged_stat$rsid
-
-#size = ifelse(merged_stat$rsid == snp, 3, 2)
-#names(size) = merged_stat$rsid
-
-#merged_stat$label = ifelse(merged_stat$rsid == snp, merged_stat$rsid, '')
-
-
-#p_supp_7a <- make_scatterplot2(merged, title1 = 'GWAS', title2 = 'eQTL', color, shape,
-#                     size, legend = T, legend_position = 'bottomright')
-
-
-#p_supp_7a <- p_supp_7a +
-#  xlab(expression(paste(-log[10],"(",italic(p)["MS GWAS"],")"))) +
-#  ylab(expression(paste(-log[10],"(",italic(p)["PU.1 bQTL"],")"))) +
-#  theme_minimal() +
-#  theme(aspect.ratio = 1,
-#        axis.title.x = element_text(size=14),
-#        axis.title.y = element_text(size=14),
-#        axis.text.x = element_text(size=12),
-#        axis.text.y = element_text(size=12))
-
 
 p_supp_7a <- ggplot(merged, aes(x=logp1, y=logp2)) +
   geom_point(aes(fill = rsid, size = rsid, shape = rsid), alpha = 0.8) +

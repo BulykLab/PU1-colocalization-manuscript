@@ -8,7 +8,7 @@ source("misc/locuscompare_updated.R")
 
 
 
-#### Supp Figures ####
+## Supp Fig. 4a - Merged association plot
 chr = "5"
 population = "EUR"
 
@@ -50,30 +50,8 @@ p_supp_4a <- ggplot(merged, aes(x=logp1, y=logp2)) +
   geom_point(aes(x=merged[merged$rsid ==snp,]$logp1, y=merged[merged$rsid ==snp,]$logp2), shape=23, size=3, fill="purple")
 
 
-#p_supp4 = make_scatterplot2(merged, title1 = 'GWAS', title2 = 'eQTL', color, shape,
-#                     size, legend = T, legend_position = 'bottomright')
 
-
-#p_supp4 <- p_supp4 +
-#  xlab(expression(paste(-log[10],"(",italic(p)["Lym #"],")"))) +
-#  ylab(expression(paste(-log[10],"(",italic(p)["PU.1 bQTL"],")")))
-
-
-  #theme_minimal() +
-  #theme(aspect.ratio = 1,
-  #      axis.title.x = element_text(size=14),
-  #      axis.title.y = element_text(size=14),
-  #      axis.text.x = element_text(size=12),
-  #      axis.text.y = element_text(size=12))
-
-#ggplot2::ggsave('../figures/Supp4.pdf',
-#                plot = p_supp_4,
-#                device='pdf',
-#                width=130, height=130, units="mm")
-
-
-
-## Supp Fig. 7b - Z score plot
+## Supp Fig. 4b - Z score plot
 
 rs12517864_effects <- read.csv('../data/SuppFig4/rs12517864_effects.txt', header = T, sep='\t')
 
