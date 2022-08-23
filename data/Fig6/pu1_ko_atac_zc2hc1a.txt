@@ -1,4 +1,4 @@
-tmm	condition
+cpm	condition
 38.13504	SPI1 -/-
 36.61008	SPI1 -/-
 32.74516	SPI1 -/-

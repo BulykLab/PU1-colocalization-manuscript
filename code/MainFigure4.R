@@ -161,13 +161,13 @@ p_eqtl_cond <- p_eqtl_cond + geom_vline(xintercept = 124341259, linetype=2) + ge
   geom_point(aes(x=124285447, y=eqtl_cond_stat[eqtl_cond_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow") + labs(title = title)
 
 ## SUSIE fine-mapping
-znf608_susie <- read.csv('../data/Fig4/ZNF608.LCL_eqtl.susie.txt', header = F, sep ='\t')
-znf608_susie$V10 <- as.factor(znf608_susie$V10)  # credible set id
-znf608_susie$color <- ifelse(znf608_susie$V10 == 1, "#00AFBB", "#FC4E07")
+znf608_susie <- read.csv('../data/Fig4/ZNF608.LCL_eqtl.susie.txt', header = T, sep ='\t')
+znf608_susie$credible_set <- as.factor(znf608_susie$credible_set)  # credible set id
+znf608_susie$color <- ifelse(znf608_susie$credible_set == 1, "#00AFBB", "#FC4E07")
 
 title = "ZNF608 eQTL credible sets (SuSiE)"
 
-p_fm <- ggplot(znf608_susie, aes(x=V6, y=V9, fill=V10)) +
+p_fm <- ggplot(znf608_susie, aes(x=pos, y=pip, fill=credible_set)) +
   geom_point(alpha=1, shape=21, size=2) + theme_classic() +
   labs(y="PIP", x = "chr5", fill="Credible set ID", title = title) +
   scale_fill_manual(values = c("#00AFBB", "#FC4E07")) +
@@ -180,8 +180,8 @@ p_fm <- ggplot(znf608_susie, aes(x=V6, y=V9, fill=V10)) +
           margin = margin(b = -12 * (stringr::str_count(title, "\n") + 1)))
         ) +
   geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2) +
-  geom_point(aes(x=124341259, y=znf608_susie[znf608_susie$V6 ==124341259,]$V9), shape=23, size=3, fill="purple") +
-  geom_point(aes(x=124285447, y=znf608_susie[znf608_susie$V6 ==124285447,]$V9), shape=23, size=3, fill="yellow")
+  geom_point(aes(x=124341259, y=znf608_susie[znf608_susie$pos ==124341259,]$pip), shape=23, size=3, fill="purple") +
+  geom_point(aes(x=124285447, y=znf608_susie[znf608_susie$pos ==124285447,]$pip), shape=23, size=3, fill="yellow")
 
 title <- expression(paste(italic('ZNF608'), " eQTL (LCLs) credible sets (SuSiE)"))
 p_fm <- p_fm + labs(title = title)
@@ -258,11 +258,11 @@ p_4_h <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B"
 
 ## PU.1 peak
 
-PU1_27777 <- read.csv('../data/Fig4/qtl/PU1_27777.cpm.boxplot.txt', header = F, sep ='\t')
+PU1_27777 <- read.csv('../data/Fig4/qtl/PU1_27777.cpm.boxplot.txt', header = T, sep ='\t')
 
 # Adding allele dosage 2 because there were no samples with homozygous alternate alleles
-p_pu1_qtl_4 <- PU1_27777 %>% mutate(V2 = factor(V2, levels=c("0", "1", "2"))) %>%
- ggplot(aes(x=V2, y=V1)) +
+p_pu1_qtl_4 <- PU1_27777 %>% mutate(genotype = factor(genotype, levels=c("0", "1", "2"))) %>%
+ ggplot(aes(x=genotype, y=cpm)) +
   geom_boxplot(fill='#46ACC8', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -277,9 +277,9 @@ p_pu1_qtl_4 <- PU1_27777 %>% mutate(V2 = factor(V2, levels=c("0", "1", "2"))) %>
 
 ## ATAC peak over PU.1 peak
 
-ATAC_59004 <- read.csv('../data/Fig4/qtl/ATAC_59004.cpm.boxplot.txt', header = F, sep ='\t')
+ATAC_59004 <- read.csv('../data/Fig4/qtl/ATAC_59004.cpm.boxplot.txt', header = T, sep ='\t')
 
-p_atac_qtl_4 <- ggplot(ATAC_59004, aes(x=as.factor(V2), y=V1)) +
+p_atac_qtl_4 <- ggplot(ATAC_59004, aes(x=as.factor(genotype), y=cpm)) +
   geom_boxplot(fill='#5166CC', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -293,9 +293,9 @@ p_atac_qtl_4 <- ggplot(ATAC_59004, aes(x=as.factor(V2), y=V1)) +
 
 ## H3K4me1
 
-H3K4me1_5 <- read.csv('../data/Fig4/qtl/H3K4me1_5_124340065_124345334.cpm.boxplot.txt', header = F, sep ='\t')
+H3K4me1_5 <- read.csv('../data/Fig4/qtl/H3K4me1_5_124340065_124345334.cpm.boxplot.txt', header = T, sep ='\t')
 
-p_h3k4me1_qtl_4 <- ggplot(H3K4me1_5, aes(x=as.factor(V2), y=V1)) +
+p_h3k4me1_qtl_4 <- ggplot(H3K4me1_5, aes(x=as.factor(genotype), y=cpm)) +
   geom_boxplot(fill='#E7B800', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -309,9 +309,9 @@ p_h3k4me1_qtl_4 <- ggplot(H3K4me1_5, aes(x=as.factor(V2), y=V1)) +
 
 ## H3K27ac
 
-H3K27ac_5 <- read.csv('../data/Fig4/qtl/H3K27ac_5_124339830_124348198.cpm.boxplot.txt', header = F, sep ='\t')
+H3K27ac_5 <- read.csv('../data/Fig4/qtl/H3K27ac_5_124339830_124348198.cpm.boxplot.txt', header = T, sep ='\t')
 
-p_h3k27ac_qtl_4 <- ggplot(H3K27ac_5, aes(x=as.factor(V2), y=V1)) +
+p_h3k27ac_qtl_4 <- ggplot(H3K27ac_5, aes(x=as.factor(genotype), y=cpm)) +
   geom_boxplot(fill='#009E73', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +

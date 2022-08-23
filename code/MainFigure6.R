@@ -101,13 +101,11 @@ p_gwas <- p_gwas + geom_vline(xintercept = 79577726, linetype=2) +
 
 
 ## SUSIE fine-mapping - lym_count
-lymcount_susie <- read.csv('../data/Fig6/ZC2HC1A.Lym.CS.bed', header = F, sep ='\t')
-#znf608_susie$V10 <- as.factor(znf608_susie$V10)  # credible set id
-#znf608_susie$color <- ifelse(znf608_susie$V10 == 1, "#00AFBB", "#FC4E07")
+lymcount_susie <- read.csv('../data/Fig6/ZC2HC1A.Lym.CS.bed', header = T, sep ='\t')
 
 title = "Lymphocyte count credible set (SuSiE)"
 
-p_fm <- ggplot(lymcount_susie, aes(x=V3, y=V18)) +
+p_fm <- ggplot(lymcount_susie, aes(x=end, y=pip)) +
   geom_point(alpha=1, shape=21, size=2, fill='#00AFBB') + theme_classic() +
   labs(y="PIP", x = "chr8", fill="Credible set ID", title = title) +
   scale_x_continuous(lim = c(start, end), expand = expansion(mult = c(0, 0))) +
@@ -120,7 +118,7 @@ p_fm <- ggplot(lymcount_susie, aes(x=V3, y=V18)) +
           margin = margin(b = -12 * (stringr::str_count(title, "\n") + 1)))
   ) +
   geom_vline(xintercept = 79577726, linetype=2) +
-  geom_point(aes(x=79577726, y=lymcount_susie[lymcount_susie$V3 ==79577726,]$V18), shape=23, size=3, fill="purple")
+  geom_point(aes(x=79577726, y=lymcount_susie[lymcount_susie$end ==79577726,]$pip), shape=23, size=3, fill="purple")
 
 
 title <- expression(paste("Lymphocyte count 95% credible set (SuSiE) (", italic('n'), "=44)"))
@@ -145,9 +143,9 @@ ggplot2::ggsave('../figures/Fig6_bcd.pdf',
 ### Figure 6e QTLs
 ## PU.1 peak
 
-PU1_40678 <- read.csv('../data/Fig6/qtl/PU1_40678.cpm.boxplot.txt', header = F, sep ='\t')
+PU1_40678 <- read.csv('../data/Fig6/qtl/PU1_40678.cpm.boxplot.txt', header = T, sep ='\t')
 
-p_pu1_qtl_6 <- ggplot(PU1_40678, aes(x=as.factor(V2), y=V1)) +
+p_pu1_qtl_6 <- ggplot(PU1_40678, aes(x=as.factor(genotype), y=cpm)) +
   geom_boxplot(fill='#46ACC8', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1))+
@@ -161,9 +159,9 @@ p_pu1_qtl_6 <- ggplot(PU1_40678, aes(x=as.factor(V2), y=V1)) +
 
 ## ATAC peak over PU.1 peak
 
-ATAC_87956 <- read.csv('../data/Fig6/qtl/ATAC_87956.cpm.boxplot.txt', header = F, sep ='\t')
+ATAC_87956 <- read.csv('../data/Fig6/qtl/ATAC_87956.cpm.boxplot.txt', header = T, sep ='\t')
 
-p_atac_qtl_6 <- ggplot(ATAC_87956, aes(x=as.factor(V2), y=V1)) +
+p_atac_qtl_6 <- ggplot(ATAC_87956, aes(x=as.factor(genotype), y=cpm)) +
   geom_boxplot(fill='#5166CC', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -177,9 +175,9 @@ p_atac_qtl_6 <- ggplot(ATAC_87956, aes(x=as.factor(V2), y=V1)) +
 
 ## H3K4me1
 
-H3K4me1_8_7 <- read.csv('../data/Fig6/qtl/H3K4me1_8_79576449_79578176.cpm.boxplot.txt', header = F, sep ='\t')
+H3K4me1_8_7 <- read.csv('../data/Fig6/qtl/H3K4me1_8_79576449_79578176.cpm.boxplot.txt', header = T, sep ='\t')
 
-p_h3k4me1_qtl_6 <- ggplot(H3K4me1_8_7, aes(x=as.factor(V2), y=V1)) +
+p_h3k4me1_qtl_6 <- ggplot(H3K4me1_8_7, aes(x=as.factor(genotype), y=cpm)) +
   geom_boxplot(fill='#E7B800', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -193,9 +191,9 @@ p_h3k4me1_qtl_6 <- ggplot(H3K4me1_8_7, aes(x=as.factor(V2), y=V1)) +
 
 ## H3K4me3
 
-H3K4me3_8_7 <- read.csv('../data/Fig6/qtl/H3K4me3_8_79576923_79580028.cpm.boxplot.txt', header = F, sep ='\t')
+H3K4me3_8_7 <- read.csv('../data/Fig6/qtl/H3K4me3_8_79576923_79580028.cpm.boxplot.txt', header = T, sep ='\t')
 
-p_h3k4me3_qtl_6 <- ggplot(H3K4me3_8_7, aes(x=as.factor(V2), y=V1)) +
+p_h3k4me3_qtl_6 <- ggplot(H3K4me3_8_7, aes(x=as.factor(genotype), y=cpm)) +
   geom_boxplot(fill='#FC4E07', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -209,9 +207,9 @@ p_h3k4me3_qtl_6 <- ggplot(H3K4me3_8_7, aes(x=as.factor(V2), y=V1)) +
 
 ## H3K27ac
 
-H3K27ac_8_7 <- read.csv('../data/Fig6/qtl/H3K27ac_8_79576467_79579592.cpm.boxplot.txt', header = F, sep ='\t')
+H3K27ac_8_7 <- read.csv('../data/Fig6/qtl/H3K27ac_8_79576467_79579592.cpm.boxplot.txt', header = T, sep ='\t')
 
-p_h3k27ac_qtl_6 <- ggplot(H3K27ac_8_7, aes(x=as.factor(V2), y=V1)) +
+p_h3k27ac_qtl_6 <- ggplot(H3K27ac_8_7, aes(x=as.factor(genotype), y=cpm)) +
   geom_boxplot(fill='#009E73', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -226,9 +224,9 @@ p_h3k27ac_qtl_6 <- ggplot(H3K27ac_8_7, aes(x=as.factor(V2), y=V1)) +
 
 ## ZC2HC1A
 
-ZC2HC1A <- read.csv('../data/Fig6/qtl/ZC2HC1A.rpkm.boxplot.txt', header = F, sep ='\t')
+ZC2HC1A <- read.csv('../data/Fig6/qtl/ZC2HC1A.rpkm.boxplot.txt', header = T, sep ='\t')
 
-p_zc2hc1a_qtl_6 <- ggplot(ZC2HC1A, aes(x=as.factor(V2), y=V1)) +
+p_zc2hc1a_qtl_6 <- ggplot(ZC2HC1A, aes(x=as.factor(genotype), y=rpkm)) +
   geom_boxplot(fill='darkgray', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -256,7 +254,7 @@ ggplot2::ggsave('../figures/Fig6_e_vertical.pdf',
                 width=60, height=220, units="mm")
 
 
-### Figure 5f,g - MPRA
+### Figure 6f,g - MPRA
 
 ZC2HC1A_MPRA <- read.table(file = "../data/Fig6/Abell2021.ZC2HC1A.MPRA.txt", header = TRUE)
 ZC2HC1A_MPRA["status"] <- ifelse(ZC2HC1A_MPRA$padj_allele >= 0.05, "NotSignificant", ifelse(ZC2HC1A_MPRA$eQTL_beta * ZC2HC1A_MPRA$log2FoldChange_allele >0, "Significant_concordant", "Significant_discordant"))
@@ -282,7 +280,7 @@ p_zc2hc1a_mpra <- ggplot(ZC2HC1A_MPRA, aes(x= log2FoldChange_allele, y = logpadj
 
 
 
-## Figure 5f - inset
+## Figure 6f - inset
 
 rs3808619_MPRA <- read.csv('../data/Fig6/rs3808619_mpra.txt', header = T, sep = '\t')
 
@@ -303,20 +301,11 @@ p_rs3808619_mpra <- ggplot(rs3808619_MPRA, aes(x= source, y = logSkew, ymin=logS
 
 
 
-### Figure 5h PU1 KO
-
-
-#ATAC_97186 <- data.frame(tmm = c(38.13503755879734, 36.610082903686305, 32.74515540836815, 29.823320845023442, 30.89238457899141,
-#                                 29.517355934293185, 62.310960788578015, 64.67332517972629, 61.25399875612181),
-#                         condition = c(rep("SPI1 -/-", 3), rep("SPI1 +/-", 3), rep("SPI1 +/+", 3)))
-
+### Figure 6g PU1 KO
 pu1_ko_atac_zc2hc1a <- read.csv('../data/Fig6/pu1_ko_atac_zc2hc1a.txt', header = T, sep = '\t')
 
-
-
-
 p_pu1ko <- pu1_ko_atac_zc2hc1a %>% mutate(condition = factor(condition, levels=c("SPI1 +/+", "SPI1 -/-"))) %>%
-  ggplot(aes(x=as.factor(condition), y=tmm)) +
+  ggplot(aes(x=as.factor(condition), y=cpm)) +
   geom_boxplot(fill='white', color="black") + theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1), size=3) +
   labs(y="Accessibility (CPM)") + ylim(0, NA) +

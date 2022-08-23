@@ -7,7 +7,7 @@ library(patchwork, quietly = TRUE)
 
 
 ## Figure 1b  -- Enrichment of # blood cell trait association tagging variants
-tag_enrich <- read.csv('../data/Fig1/PU1_100kb_tagging_enrichment.txt', header=T, sep='\t')
+tag_enrich <- read.csv('../data/Fig2/PU1_100kb_tagging_enrichment.txt', header=T, sep='\t')
 
 
 p_2a <- tag_enrich %>% mutate(Category = factor(Category, levels=c("Granulocyte", "Monocyte", "Lymphocyte", "MatureRed", "ImmatureRed","Platelet"))) %>%
@@ -61,7 +61,7 @@ motif_altered <- read.csv('../data/Fig2/colocalized_motif_altered_summary.txt', 
 # Bar plot summarizing PU.1 motif alteration in colocalized loci
 p_2c <- motif_altered %>% mutate(type = factor(type, levels=c("SNP", "Indel", "CNV", "Multi", "Unk"))) %>%
   mutate(motif = factor(motif, levels=c("+", "-",  "?"))) %>%
-  ggplot(aes(x = type, y= value, fill=motif)) +
+  ggplot(aes(x = type, y= number, fill=motif)) +
   theme_classic() +
   geom_col() + geom_text(aes(label = value), position = position_stack(vjust = 0.5), color="black", size=5) +
   theme(axis.title.x = element_text(size=18), axis.title.y = element_text(size=18),

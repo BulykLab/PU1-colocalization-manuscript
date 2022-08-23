@@ -18,12 +18,12 @@ pu1_file="../data/Fig5/coloc/PU1_71930.bqtl.withbeta.filtered.txt"
 ld_file="../data/Fig5/coloc/rs5827412.ld.txt"
 snp = 'rs5827412'
 
-gwas_stat <- read.table(gwas_file, header=F)
-colnames(gwas_stat) <- c("rsid", "chr", "pos", "pval", "beta", "se")
+gwas_stat <- read.table(gwas_file, header=T)
+#colnames(gwas_stat) <- c("rsid", "chr", "pos", "pval", "beta", "se")
 gwas_stat$z <- gwas_stat$beta / gwas_stat$se
 
-pu1_stat <- read.table(pu1_file, header=F)
-colnames(pu1_stat) <- c("rsid", "chr", "pos", "pval", "beta")
+pu1_stat <- read.table(pu1_file, header=T)
+#colnames(pu1_stat) <- c("rsid", "chr", "pos", "pval", "beta")
 pu1_stat$z <- qnorm((pu1_stat$pval)/2, lower.tail = F) * (pu1_stat$beta / abs(pu1_stat$beta))
 
 merged_stat <- merge(gwas_stat, pu1_stat, by=c("rsid", "pos"))
@@ -85,7 +85,7 @@ p_rs5827412_mpra <- ggplot(rs5827412_mpra, aes(x= source, y = logSkew, ymin=logS
 pu1ko_atac_lrrc25 <- read.csv('../data/Fig5/pu1_ko_atac_lrrc25.txt', header = T, sep ='\t')
 
 p_pu1ko <- pu1ko_atac_lrrc25 %>% mutate(condition = factor(condition, levels=c("SPI1+/+", "SPI-/-"))) %>%
-  ggplot(aes(x=as.factor(condition), y=tmm)) +
+  ggplot(aes(x=as.factor(condition), y=cpm)) +
   geom_boxplot(fill='white', color="black") + theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1), size=3) +
   labs(y="Accessibility (CPM)") + ylim(0, NA) +
