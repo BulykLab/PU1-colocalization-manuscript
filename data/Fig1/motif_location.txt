@@ -1,5 +1,0 @@
-location	pu1motif	number
-Center 50bp	motif	316
-Elsewhere	motif	38
-Center 50bp	none	453
-Elsewhere	none	241

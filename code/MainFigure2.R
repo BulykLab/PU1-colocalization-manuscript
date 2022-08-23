@@ -8,31 +8,19 @@ library(patchwork, quietly = TRUE)
 
 ## Figure 1b  -- Enrichment of # blood cell trait association tagging variants
 tag_enrich <- read.csv('../data/Fig1/PU1_100kb_tagging_enrichment.txt', header=T, sep='\t')
-#tag_enrich$P <- ifelse(tag_enrich$P == 0, 0.001, tag_enrich$P)
-#tag_enrich$label <- rep("", length(tag_enrich[1]))
-
-#tag_enrich$P <- (tag_enrich$P * 250 +1) / 251
 
 
-#for (i in 1:length(tag_enrich[,1])) {
-#  temp <- as.vector(tag_enrich$Trait)
-#  if (tag_enrich[i,2] < 0.05) {
-#    tag_enrich[i,6] <- temp[i]
-#  }
-#}
-
-
-p_2a <- tag_enrich %>% mutate(Category = factor(Category, levels=c("Granulocyte", "Monocyte", "Lymphocyte", "MatureRed", "ImmatureRed","Platelet"))) %>% 
-  ggplot(aes(x=obs/exp, y=-log10(qval), color=Category)) + 
-  geom_hline(yintercept = -log10(0.05), linetype=2, alpha = 0.4) +  
+p_2a <- tag_enrich %>% mutate(Category = factor(Category, levels=c("Granulocyte", "Monocyte", "Lymphocyte", "MatureRed", "ImmatureRed","Platelet"))) %>%
+  ggplot(aes(x=obs/exp, y=-log10(qval), color=Category)) +
+  geom_hline(yintercept = -log10(0.05), linetype=2, alpha = 0.4) +
   geom_point(size=3) +
   theme_classic() +
   xlim(c(0,3.5)) + ylim(c(0,2)) +
   scale_color_manual(values=c('#F98400', '#351C75', '#40A2EB', '#FFB6C1', '#A61C00', '#008000'), name="Trait group") +
   xlab("Fold enrichment") + ylab(expression(paste(-log[10],"(",italic(p)[adjusted],")"))) +
   ggrepel::geom_text_repel(aes(label=label), min.segment.length = 0, box.padding = 0.3, seed=1) + # , ylim=c(1.4,2.5)
-  theme(axis.title.x = element_text(size=18), axis.title.y = element_text(size=18), 
-        axis.text.x = element_text(size=14), axis.text.y = element_text(size=16), 
+  theme(axis.title.x = element_text(size=18), axis.title.y = element_text(size=18),
+        axis.text.x = element_text(size=14), axis.text.y = element_text(size=16),
         legend.title=element_text(size=12), legend.text=element_text(size=11),
         legend.position = c(0.2, 0.75),
         legend.background = element_rect(fill = "white", color = "black"),
@@ -50,13 +38,6 @@ jlim_v_coloc <- read.csv('../data/Fig2/JLIM_COLOC.all.stat.txt', header = T, sep
 # Therefore, JLIM p value threshold 0.01172 will be used for FDR 5%
 jlim_threshold <- 0.01172
 
-# Determining statistical significance
-#jlim_v_coloc["jlim"] <- ifelse(jlim_v_coloc$jlim_p <=  jlim_threshold, 1, 0)
-#jlim_v_coloc["coloc"] <- ifelse(jlim_v_coloc$coloc_H4 >= 0.5, 1, 0)
-#jlim_v_coloc["status"] <- ifelse(jlim_v_coloc$jlim & jlim_v_coloc$coloc, "both", ifelse(jlim_v_coloc$jlim & !jlim_v_coloc$coloc,"jlim_only", ifelse(jlim_v_coloc$coloc, "coloc_only", "neither")))
-#jlim_v_coloc["jlimp"] <- ifelse(jlim_v_coloc$jlim_p == 0, 1/(10^5+1), jlim_v_coloc$jlim_p)
-
-#write.table(jlim_v_coloc, '../data/Fig2/JLIM_COLOC.all.stat.2.txt', sep = '\t', quote = F, row.names = F)
 ### scatter plot of significance ###
 p_2b <- ggplot(jlim_v_coloc) + theme_classic() +
   geom_hline(yintercept = 0.5, linetype = 2) + geom_vline(xintercept = -log10(jlim_threshold), linetype = 2) +
@@ -80,7 +61,7 @@ motif_altered <- read.csv('../data/Fig2/colocalized_motif_altered_summary.txt', 
 # Bar plot summarizing PU.1 motif alteration in colocalized loci
 p_2c <- motif_altered %>% mutate(type = factor(type, levels=c("SNP", "Indel", "CNV", "Multi", "Unk"))) %>%
   mutate(motif = factor(motif, levels=c("+", "-",  "?"))) %>%
-  ggplot(aes(x = type, y= value, fill=motif)) + 
+  ggplot(aes(x = type, y= value, fill=motif)) +
   theme_classic() +
   geom_col() + geom_text(aes(label = value), position = position_stack(vjust = 0.5), color="black", size=5) +
   theme(axis.title.x = element_text(size=18), axis.title.y = element_text(size=18),

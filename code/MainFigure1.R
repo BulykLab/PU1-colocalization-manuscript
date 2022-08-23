@@ -4,7 +4,6 @@ library(cowplot)
 library(data.table)
 library(stringr)
 library(patchwork)
-library(qval)
 
 ## Figure 1b  -- Enrichment of # blood cell trait association tagging variants
 
@@ -34,9 +33,9 @@ p_1b <- ggplot(pu1_gkmsvm, aes(x=ALT_gkmsvm - REF_gkmsvm, y=beta, color=-log10(p
 
 
 ## Figure 1d  --  Number of motif-altering variants at the center of peak
-motif_location <- read.csv('../data/Fig1/motif_location.txt', header=T, sep='\t')
+motif_variant_location <- read.csv('../data/Fig1/motif_variant_location.txt', header=T, sep='\t')
 
-p_1c <- motif_location %>% mutate(pu1motif = factor(pu1motif, levels=c("none","motif"))) %>%
+p_1c <- motif_variant_location %>% mutate(pu1motif = factor(pu1motif, levels=c("none","motif"))) %>%
 ggplot(aes(x=location, y=number)) +
   geom_col(aes(fill = location, alpha=pu1motif, linetype=pu1motif), width = 0.8, color = 'black') +
   theme_classic() +
@@ -49,7 +48,7 @@ ggplot(aes(x=location, y=number)) +
   scale_fill_manual(values =c('#F8766D', '#B8B4B4')) +
   scale_alpha_manual(values = c(0,1),labels = c('no','yes'), name = "PU.1 motif altered") +
   scale_linetype_manual(values = c('dashed', 'solid'), labels = c('no', 'yes'), name = expression(paste(italic("PU.1")," motif altered"))) +
-  scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 10)) +
+  scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 6)) +
   guides(fill = "none", alpha = "none", linetype="none")
 
 
