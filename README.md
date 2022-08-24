@@ -4,6 +4,24 @@ This repository contains codes and data for generating figures to Jeong and Buly
 Updated August 23rd 2022. Raehoon Jeong (rjeong@g.harvard.edu), Martha Bulyk Lab (mlbulyk@genetics.med.harvard.edu).
 
 
+### Note
+- Genome track images of PU.1 ChIP-seq, ATAC-seq, etc. were generated using <a href="https://software.broadinstitute.org/software/igv/">IGV browser</a>.
+- Fuji plot in Figure 3 was generated using code from <a href="https://github.com/mkanai/fujiplot">Masahiro Kanai</a>.
+- The <a href="https://github.com/BulykLab/PU1-colocalization-manuscript/blob/main/figures/r2_panel.pdf">legend for colors reflecting LD with selected variants</a> were added individually.
+- For the other R scripts, the following packages need to be installed.
+```
+ggplot2
+dplyr
+cowplot
+forcats
+patchwork
+data.table
+AnnotationDbi
+Ggbio
+GenomicRanges
+locuscomparer
+```
+
 ### Workflow
 1) Clone the repository
 ```
@@ -17,8 +35,3 @@ cd PU1-colocalization-manuscript/codes
 ```
 Rscript MainFigure2.R   # or any other code in the directory
 ```
-
-### Note
-- Genome track images of PU.1 ChIP-seq, ATAC-seq, etc. were generated using <a href="https://software.broadinstitute.org/software/igv/">IGV browser</a>.
-- Fuji plot in Figure 3 was generated using code from <a href="https://github.com/mkanai/fujiplot">Masahiro Kanai</a>.
-- The <a href="https://github.com/BulykLab/PU1-colocalization-manuscript/blob/main/figures/r2_panel.pdf">legend for colors reflecting LD with selected variants</a> were added individually.
