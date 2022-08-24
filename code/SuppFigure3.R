@@ -5,7 +5,7 @@ library(forcats, quietly = TRUE)
 library(patchwork, quietly = TRUE)
 
 
-#### Figure 2a - JLIM vs Coloc scatterplot ####
+#### Supp Figure 3 - JLIM vs Coloc scatterplot ####
 
 # Reading JLIM and Coloc results
 jlim_v_coloc <- read.csv('../data/Fig2/JLIM_COLOC.all.stat.txt', header = T, sep ='\t')
@@ -21,9 +21,9 @@ jlim_v_coloc["coloc"] <- ifelse(jlim_v_coloc$coloc_H4 >= 0.5, 1, 0)
 jlim_v_coloc["status"] <- ifelse(jlim_v_coloc$jlim & jlim_v_coloc$coloc, "both", ifelse(jlim_v_coloc$jlim & !jlim_v_coloc$coloc,"jlim_only", ifelse(jlim_v_coloc$coloc, "coloc_only", "neither")))
 jlim_v_coloc["jlimp"] <- ifelse(jlim_v_coloc$jlim_p == 0, 1/(10^5+1), jlim_v_coloc$jlim_p)
 
-## Supp Figure 2
+## Supp Figure 3
 ## JLIM X Coloc O
-p_supp_2a <- ggplot(jlim_v_coloc) + theme_classic() +
+p_supp_3a <- ggplot(jlim_v_coloc) + theme_classic() +
   geom_hline(yintercept = 0.5, linetype = 2) + geom_vline(xintercept = -log10(jlim_threshold), linetype = 2) +
   geom_rect(xmin=-0.1, xmax=-log10(jlim_threshold), ymin=0.5, ymax=1.02, fill="#FFF4C0", alpha=0.01) +
   geom_point(aes(x=-log10(jlimp), y = coloc_H4, color = status), alpha=1) +
@@ -37,7 +37,7 @@ p_supp_2a <- ggplot(jlim_v_coloc) + theme_classic() +
   theme(aspect.ratio=1)
 
 ## JLIM O Coloc X
-p_supp_2b <- ggplot(jlim_v_coloc) + theme_classic() +
+p_supp_3b <- ggplot(jlim_v_coloc) + theme_classic() +
   geom_hline(yintercept = 0.5, linetype = 2) + geom_vline(xintercept = -log10(jlim_threshold), linetype = 2) +
   geom_rect(xmin=-log10(jlim_threshold), xmax=5.15, ymin=-0.035, ymax=0.5, fill="#FFF4C0", alpha=0.01) +
   geom_point(aes(x=-log10(jlimp), y = coloc_H4, color = status), alpha=1) +
@@ -51,12 +51,12 @@ p_supp_2b <- ggplot(jlim_v_coloc) + theme_classic() +
   theme(aspect.ratio=1)
 
 
-ggsave('../figures/Supp2_a.pdf',
-       plot = p_supp_2a,
+ggsave('../figures/Supp3_a.pdf',
+       plot = p_supp_3a,
        device='pdf',
        width=200, height=160, units="mm")
 
-ggsave('../figures/Supp2_b.pdf',
-       plot = p_supp_2b,
+ggsave('../figures/Supp3_b.pdf',
+       plot = p_supp_3b,
        device='pdf',
        width=200, height=160, units="mm")
