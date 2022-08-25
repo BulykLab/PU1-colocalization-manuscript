@@ -15,10 +15,10 @@ library(patchwork, quietly = T)
 #                             beta=c(-0.0451654, -0.029094, 0.0304417, 0.0262255, 0.0160937),
 #                             se=c(0.00216547, 0.00213564, 0.00220315, 0.00219324, 0.0021686))
 
-rs5827412_gwas <- read.csv('../data/SuppFig5/rs5827412_gwas.txt', header = T, sep ='\t')
+rs5827412_gwas <- read.csv('../data/ExtDataFig4/rs5827412_gwas.txt', header = T, sep ='\t')
 
 
-p_supp_5_a <- ggplot(rs5827412_gwas, aes(x = beta, xmin=beta-1.96*se, xmax=beta+1.96*se, y= source)) +
+p_extdata_4_a <- ggplot(rs5827412_gwas, aes(x = beta, xmin=beta-1.96*se, xmax=beta+1.96*se, y= source)) +
   geom_point(fill="gray", color="black", size=2) +
   theme_minimal_vgrid() +
   geom_errorbar(color = "black", width = 0.2) +
@@ -28,8 +28,8 @@ p_supp_5_a <- ggplot(rs5827412_gwas, aes(x = beta, xmin=beta-1.96*se, xmax=beta+
         aspect.ratio = .7) +
   geom_vline(xintercept=0, size=1) + xlab("Effect size")
 
-ggplot2::ggsave('../figures/Supp5_a.pdf',
-                plot = p_supp_5_a,
+ggplot2::ggsave('../figures/ExtDataFig4a.pdf',
+                plot = p_extdata_4_a,
                 device='pdf',
                 width=150, height=100, units="mm")
 
@@ -52,7 +52,7 @@ p_lrrc25_rna_all <- ggplot(LRRC25_RNA, aes(x=reorder(as.factor(celltype), -V1), 
         axis.text.x = element_text(face="bold", size=14), axis.text.y = element_text(face="bold", size=14),
         legend.position="none")
 
-ggplot2::ggsave('../figures/Supp5_b.pdf',
+ggplot2::ggsave('../figures/ExtDataFig4b.pdf',
                 plot = p_lrrc25_rna_all,
                 device='pdf',
                 width=250, height=150, units="mm")
@@ -61,7 +61,7 @@ ggplot2::ggsave('../figures/Supp5_b.pdf',
 #### Supp Figure 5c - QTL plots for rs5827412
 
 ## PU.1 bQTL
-PU1_71930 <- read.csv('../data/SuppFig5/qtl/PU1_71930.cpm.boxplot.txt', header = F, sep ='\t')
+PU1_71930 <- read.csv('../data/ExtDataFig4/qtl/PU1_71930.cpm.boxplot.txt', header = F, sep ='\t')
 
 p_pu1_qtl_5 <- ggplot(PU1_71930, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='#46ACC8', color="black") +
@@ -76,7 +76,7 @@ p_pu1_qtl_5 <- ggplot(PU1_71930, aes(x=as.factor(V2), y=V1)) +
         axis.text.y = element_text(size=12))
 
 ## chromatin accessibility QTL
-ATAC_146492 <- read.csv('../data/SuppFig5/qtl/ATAC_146492.cpm.boxplot.txt', header = F, sep ='\t')
+ATAC_146492 <- read.csv('../data/ExtDataFig4/qtl/ATAC_146492.cpm.boxplot.txt', header = F, sep ='\t')
 
 p_atac_qtl_5 <- ggplot(ATAC_146492, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='#5166CC', color="black") +
@@ -91,7 +91,7 @@ p_atac_qtl_5 <- ggplot(ATAC_146492, aes(x=as.factor(V2), y=V1)) +
         axis.text.y = element_text(size=12))
 
 ## H3K4me1 QTL
-H3K4me1_19 <- read.csv('../data/SuppFig5/qtl/H3K4me1_19_18511451_18514338.cpm.boxplot.txt', header = F, sep ='\t')
+H3K4me1_19 <- read.csv('../data/ExtDataFig4/qtl/H3K4me1_19_18511451_18514338.cpm.boxplot.txt', header = F, sep ='\t')
 
 p_h3k4me1_qtl_5 <- ggplot(H3K4me1_19, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='#E7B800', color="black") +
@@ -106,7 +106,7 @@ p_h3k4me1_qtl_5 <- ggplot(H3K4me1_19, aes(x=as.factor(V2), y=V1)) +
         axis.text.y = element_text(size=12))
 
 ## H3K27ac QTL
-H3K27ac_19 <- read.csv('../data/SuppFig5/qtl/H3K27ac_19_18511593_18514423.cpm.boxplot.txt', header = F, sep ='\t')
+H3K27ac_19 <- read.csv('../data/ExtDataFig4/qtl/H3K27ac_19_18511593_18514423.cpm.boxplot.txt', header = F, sep ='\t')
 
 p_h3k27ac_qtl_5 <- ggplot(H3K27ac_19, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='#009E73', color="black") +
@@ -121,7 +121,7 @@ p_h3k27ac_qtl_5 <- ggplot(H3K27ac_19, aes(x=as.factor(V2), y=V1)) +
         axis.text.y = element_text(size=12))
 
 ## LRRC25 eQTL
-LRRC25 <- read.csv('../data/SuppFig5/qtl/LRRC25.rpkm.boxplot.txt', header = F, sep ='\t')
+LRRC25 <- read.csv('../data/ExtDataFig4/qtl/LRRC25.rpkm.boxplot.txt', header = F, sep ='\t')
 
 p_lrrc25_qtl_5 <- ggplot(LRRC25, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='darkgray', color="black") +
@@ -137,7 +137,7 @@ p_lrrc25_qtl_5 <- ggplot(LRRC25, aes(x=as.factor(V2), y=V1)) +
 
 
 ## plotting the panels together
-p_supp_5_c_horizontal <- p_pu1_qtl_5 +
+p_extdata_4_c_horizontal <- p_pu1_qtl_5 +
   p_atac_qtl_5 +
   p_h3k4me1_qtl_5 +
   p_h3k27ac_qtl_5 +
@@ -145,7 +145,7 @@ p_supp_5_c_horizontal <- p_pu1_qtl_5 +
   plot_layout(ncol = 5, widths = c(1,1,1,1,1))
 
 
-ggplot2::ggsave('../figures/Supp5_c.pdf',
-                plot = p_supp_5_c_horizontal,
+ggplot2::ggsave('../figures/ExtDataFig4c.pdf',
+                plot = p_extdata_4_c_horizontal,
                 device='pdf',
                 width=250, height=60, units="mm")
