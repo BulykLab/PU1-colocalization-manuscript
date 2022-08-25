@@ -8,15 +8,15 @@ source("misc/locuscompare_updated.R")
 
 
 
-## Supp Fig. 4a - Merged association plot
+## Ext. Data Fig. 3a - Merged association plot
 chr = "5"
 population = "EUR"
 
 ### Scatter Plot
-pu1_file = "../data/SuppFig4/PU1_27777.pu1bqtl.metal.txt"
+pu1_file = "../data/ExtDataFig3/PU1_27777.pu1bqtl.metal.txt"
 pu1_stat = read_metal(pu1_file, marker_col = 'rsid', pval_col = 'pval')
 
-gwas_file = "../data/SuppFig4/ZNF608.lym_count.metal.txt"
+gwas_file = "../data/ExtDataFig3/ZNF608.lym_count.metal.txt"
 gwas_stat = read_metal(gwas_file, marker_col = 'rsid', pval_col = 'pval')
 
 merged = merge(gwas_stat, pu1_stat, by = "rsid", suffixes = c("1", "2"), all = FALSE)
@@ -35,7 +35,7 @@ merged$label = ifelse(merged$rsid == snp, merged$rsid, '')
 
 
 
-p_supp_4a <- ggplot(merged, aes(x=logp1, y=logp2)) +
+p_extdata_3a <- ggplot(merged, aes(x=logp1, y=logp2)) +
   geom_point(aes(fill = rsid, size = rsid, shape = rsid), alpha = 0.8) +
   theme_minimal() +
   scale_fill_manual(values = color, guide = "none") +
@@ -51,11 +51,11 @@ p_supp_4a <- ggplot(merged, aes(x=logp1, y=logp2)) +
 
 
 
-## Supp Fig. 4b - Z score plot
+## Ext. Data Fig. 3b - Z score plot
 
-rs12517864_effects <- read.csv('../data/SuppFig4/rs12517864_effects.txt', header = T, sep='\t')
+rs12517864_effects <- read.csv('../data/ExtDataFig3/rs12517864_effects.txt', header = T, sep='\t')
 
-p_supp_4b <- ggplot(rs12517864_effects, aes(y = beta / se, x= source)) +
+p_extdata_3b <- ggplot(rs12517864_effects, aes(y = beta / se, x= source)) +
  geom_col(fill="gray", color="black") +
  theme_classic() + background_grid(major = 'y') +
  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
@@ -65,9 +65,9 @@ p_supp_4b <- ggplot(rs12517864_effects, aes(y = beta / se, x= source)) +
  geom_vline(xintercept=0, size=1) + ylab("Z score (rs12517864)")
 
 
-p_supp_4 <- p_supp_4a + p_supp_4b + plot_layout(widths = c(1,0.5))
+p_extdata_3 <- p_extdata_3a + p_extdata_3b + plot_layout(widths = c(1,0.5))
 
-ggplot2::ggsave('../figures/Supp4.pdf',
-               plot = p_supp_4,
+ggplot2::ggsave('../figures/ExtDataFig3.pdf',
+               plot = p_extdata_3,
                device='pdf',
                width=300, height=150, units="mm")
