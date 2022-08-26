@@ -3,11 +3,11 @@ library(patchwork)
 
 ### Need to run Rscript PU1-colocalization-manuscript/code/analysis/PU1KO_ATAC_analysis.R to generate DESeq2 results file
 
-res_pu1ko <- read.csv('../data/SuppFig6/res_pu1ko.txt', header = T, sep = '\t')
+res_pu1ko <- read.csv('../data/SuppFig3/res_pu1ko.txt', header = T, sep = '\t')
 
 
-rs411_ATAC_PU1 <- read.table("../data/SuppFig6/rs411_ATAC.PU1.bed", header=FALSE)
-rs411_ATAC_noPU1 <- read.table("../data/SuppFig6/rs411_ATAC.noPU1.bed", header=FALSE)
+rs411_ATAC_PU1 <- read.table("../data/SuppFig3/rs411_ATAC.PU1.bed", header=FALSE)
+rs411_ATAC_noPU1 <- read.table("../data/SuppFig3/rs411_ATAC.noPU1.bed", header=FALSE)
 
 
 ## Plotting
@@ -38,10 +38,10 @@ p_atac_nopu1 <- ggplot(data=res_pu1ko[rownames(res_pu1ko) %in% rs411_ATAC_noPU1$
 
 
 
-p_supp_6 <- p_atac_pu1 +
+p_supp_3 <- p_atac_pu1 +
   p_atac_nopu1 + plot_layout(ncol = 2, widths = c(1, 1))
 
-ggplot2::ggsave('../figures/Supp6.pdf',
-                plot = p_supp_6,
+ggplot2::ggsave('../figures/SuppFig3.pdf',
+                plot = p_supp_3,
                 device='pdf',
                 width=250, height=125, units="mm")
