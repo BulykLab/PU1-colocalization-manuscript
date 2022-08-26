@@ -133,7 +133,7 @@ p_6_bcd <- p_pu1 + scale_y_continuous(expand = expansion(mult = c(0, 0.08))) + t
   plot_layout(nrow = 4, heights = c(1, 1, 0.4, 0.4))
 
 
-ggplot2::ggsave('../figures/Fig6_bcd.pdf',
+ggplot2::ggsave('../figures/Fig6bcd.pdf',
                 plot = p_6_bcd,
                 device='pdf',
                 width=250, height=125, units="mm")
@@ -248,7 +248,7 @@ p_6_e_vertical <- p_pu1_qtl_6 +
   plot_layout(nrow = 6)
 
 
-ggplot2::ggsave('../figures/Fig6_e_vertical.pdf',
+ggplot2::ggsave('../figures/Fig6e.pdf',
                 plot = p_6_e_vertical,
                 device='pdf',
                 width=60, height=220, units="mm")
@@ -319,7 +319,7 @@ p_pu1ko <- pu1_ko_atac_zc2hc1a %>% mutate(condition = factor(condition, levels=c
 p_6_fg <- p_zc2hc1a_mpra + p_rs3808619_mpra + p_pu1ko + plot_layout(nrow = 3, heights = c(2,1,1))
 
 
-ggplot2::ggsave('../figures/Fig6_fg.pdf',
+ggplot2::ggsave('../figures/Fig6fg.pdf',
                 plot = p_6_fg,
                 device='pdf',
                 width=180, height=210, units="mm")

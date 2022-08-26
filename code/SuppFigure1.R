@@ -31,7 +31,7 @@ p_pu1_RNA <- SPI1_RNA %>% mutate(celltype = factor(celltype, levels=c("HSC", "MP
         legend.text=element_text(size=16), legend.position = 'bottom')
 
 
-ggsave('../figures/Supp1.pdf',
+ggsave('../figures/SuppFig1.pdf',
        plot = p_pu1_RNA,
        device='pdf',
        width=200, height=150, units="mm")

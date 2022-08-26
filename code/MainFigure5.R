@@ -56,7 +56,7 @@ p_5_a <- ggplot(merged_stat) +
 
 
 
-ggplot2::ggsave('../figures/Fig5_a.pdf',
+ggplot2::ggsave('../figures/Fig5a.pdf',
                 plot = p_5_a,
                 device='pdf',
                 width=110, height=110, units="mm")
@@ -119,7 +119,7 @@ p_lrrc25_rna_mono_diff <- LRRC25_RNA %>% filter(celltype %in% c("HSC", "MPP", "C
 p_5_cde <- p_rs5827412_mpra + p_pu1ko + p_lrrc25_rna_mono_diff + plot_layout(ncol=3, widths = c(1,1,1.4))
 
 
-ggplot2::ggsave('../figures/Fig5_cde.pdf',
+ggplot2::ggsave('../figures/Fig5cde.pdf',
                 plot = p_5_cde,
                 device='pdf',
                 width=250, height=75, units="mm")
@@ -198,7 +198,7 @@ p_lrrc25 <- ggplot() + theme_classic() +
 
 p_5_fg <- p_bp_lrrc25 + p_lrrc25 + plot_layout(nrow=2, heights = c(2,1))
 
-ggplot2::ggsave('../figures/Fig5_fg.pdf',
+ggplot2::ggsave('../figures/Fig5fg.pdf',
                 plot = p_5_fg,
                 device='pdf',
                 width=200, height=72, units="mm")

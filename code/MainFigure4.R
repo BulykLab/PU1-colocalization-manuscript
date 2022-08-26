@@ -227,7 +227,7 @@ p_4_acdeg <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element
   plot_layout(nrow = 7, heights = c(3, 3, 3, 3, 3, 3, 2))
 
 
-ggplot2::ggsave('../figures/Fig4_acdeg.pdf',
+ggplot2::ggsave('../figures/Fig4acdeg.pdf',
        plot = p_4_acdeg,
        device='pdf',
        width=200, height=200, units="mm")
@@ -334,7 +334,7 @@ p_4_i <- p_pu1_qtl_4 +
 ## Plotting Fig4h,i together
 p_4_hi <- cowplot::plot_grid(p_4_h, p_4_i, nrow = 2, rel_heights = c(6,5))
 
-ggplot2::ggsave('../figures/Fig4_hi.pdf',
+ggplot2::ggsave('../figures/Fig4hi.pdf',
                 plot = p_4_hi,
                 device='pdf',
                 width=105, height=180, units="mm")

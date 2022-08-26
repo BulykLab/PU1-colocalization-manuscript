@@ -219,7 +219,7 @@ p_pu1_64115 <- p_pu1 + p_gwas + plot_layout(nrow = 2)
 p_supp_2a_left <- plot_grid(p_pu1_17402, p_pu1_27131,p_pu1_54831, p_pu1_64115,ncol = 2)
 p_supp_2a <- plot_grid(p_supp_2a_left, NULL, p_supp_2a_right, ncol = 3, rel_widths = c(2,0.1,1))
 
-ggsave('../figures/Supp2_a.pdf',
+ggsave('../figures/SuppFig2a.pdf',
        plot = p_supp_2a,
        device='pdf',
        width=400, height=140, units="mm")
@@ -397,7 +397,7 @@ p_supp_2b <- plot_grid(p_supp_2b_left, NULL, p_supp_2b_right, ncol = 3, rel_widt
 
 
 
-ggsave('../figures/Supp2_b.pdf',
+ggsave('../figures/SuppFig2b.pdf',
        plot = p_supp_2b,
        device='pdf',
        width=400, height=140, units="mm")
