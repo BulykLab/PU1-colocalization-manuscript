@@ -5,10 +5,10 @@ library(data.table)
 library(stringr)
 library(patchwork)
 
-## Figure 1b  -- Enrichment of # blood cell trait association tagging variants
+## Extended Data Figure 2b  -- Enrichment of # blood cell trait association tagging variants
 
 
-## Figure 1b - gkmSVM vs per-allele effect size
+## Extended Data Figure 2b - gkmSVM vs per-allele effect size
 
 pu1_gkmsvm <- read.csv('../data/ExtDataFig2/PU1_motif_score_bqtl.txt', header = T, sep = '\t')
 
@@ -26,6 +26,8 @@ p_ext_2b <- ggplot(pu1_gkmsvm, aes(x=ALT_gkmsvm - REF_gkmsvm, y=beta, color=-log
         legend.position = c(0.87, 0.25),
         aspect.ratio=1)
 
+# p value for Pearson correlation
+# cor.test(pu1_gkmsvm$ALT_gkmsvm-pu1_gkmsvm$REF_gkmsvm, pu1_gkmsvm$beta)$p.value
 
 ggsave('../figures/ExtDataFig2b.pdf',
        plot = p_ext_2b,

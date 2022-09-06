@@ -31,6 +31,8 @@ p_1b <- ggplot(pu1_gkmsvm, aes(x=ALT_gkmsvm - REF_gkmsvm, y=beta, color=-log10(p
   geom_point(data=pu1_gkmsvm %>% filter(PU1_peak=='PU1_70939'), aes(x=ALT_gkmsvm - REF_gkmsvm, y=beta), shape=23, size = 3, fill='purple')
 
 
+# p value for Pearson correlation
+# cor.test(pu1_gkmsvm$ALT_gkmsvm-pu1_gkmsvm$REF_gkmsvm, pu1_gkmsvm$beta)$p.value
 
 ## Figure 1c  --  Number of motif-altering variants at the center of peak
 motif_variant_location <- read.csv('../data/Fig1/motif_variant_location.txt', header=T, sep='\t')
@@ -51,6 +53,8 @@ ggplot(aes(x=location, y=number)) +
   scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 6)) +
   guides(fill = "none", alpha = "none", linetype="none")
 
+# P value for Fisher's exact test
+# fisher.test(matrix(motif_variant_location$number, ncol=2))$p.value
 
 p_1_merged <- p_1b + p_1c + plot_layout(nrow = 2, heights = c(1, 0.7))
 
