@@ -7,7 +7,7 @@ Updated September 6th 2022. Raehoon Jeong (rjeong@g.harvard.edu), Martha Bulyk L
 ### Note
 - Genome track images of PU.1 ChIP-seq, ATAC-seq, etc. were generated using <a href="https://software.broadinstitute.org/software/igv/">IGV browser</a>.
 - Fuji plot in Figure 3 was generated using code from <a href="https://github.com/mkanai/fujiplot">Masahiro Kanai</a>.
-- Canonical transcripts of genes are plotting using database from <a href="https://github.com/mkanai/locusviz/tree/master/inst/extdata">Locusviz</a>.  
+- Canonical transcripts of genes were plotted using database from <a href="https://github.com/mkanai/locusviz/tree/master/inst/extdata">Locusviz</a>.  
 - The <a href="https://github.com/BulykLab/PU1-colocalization-manuscript/blob/main/figures/r2_panel.pdf">legend for colors reflecting LD with selected variants</a> were added individually.
 - For the other R scripts, the following packages need to be installed.
 ```
