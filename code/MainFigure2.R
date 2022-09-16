@@ -53,6 +53,9 @@ p_2b <- ggplot(jlim_v_coloc) + theme_classic() +
   theme(aspect.ratio=1)
 
 
+## Pearson correlation of the two results
+## cor.test(jlim_v_coloc$coloc_H4, -log10(jlim_v_coloc$jlim_p))$p.value
+
 #### Figure 2b - Colocalized loci PU.1 motif altering variants bar plot ####
 
 # Reading PU.1 motif alteration summary
