@@ -233,13 +233,90 @@ ggplot2::ggsave('../figures/Fig4acdeg.pdf',
        width=200, height=200, units="mm")
 
 
-## Figure 5h  - ZNF608 expression across blood cell types (related to lymphocytes)
+## Figure h
+### Regulatory QTLs
+
+## PU.1 peak
+
+PU1_27777 <- read.csv('../data/Fig4/qtl/PU1_27777.cpm.boxplot.txt', header = T, sep ='\t')
+
+# Adding allele dosage 2 because there were no samples with homozygous alternate alleles
+p_pu1_qtl_4 <- PU1_27777 %>% mutate(genotype = factor(genotype, levels=c("0", "1", "2"))) %>%
+ggplot(aes(x=genotype, y=cpm)) +
+ geom_boxplot(fill='#46ACC8', color="black") +
+ theme_classic() +
+ geom_jitter(shape=16, position=position_jitter(0.1)) +
+ labs(y="Read per million", title = "PU.1 ChIP") +
+ ylim(0, NA) +
+ scale_x_discrete(breaks=factor(0:2), drop = F) +
+ theme(plot.title = element_text(size=14),
+       axis.title.x = element_blank(),
+       axis.title.y = element_text(size=12),
+       axis.text.x = element_blank(),
+       axis.text.y = element_text(size=12))
+
+## ATAC peak over PU.1 peak
+
+ATAC_59004 <- read.csv('../data/Fig4/qtl/ATAC_59004.cpm.boxplot.txt', header = T, sep ='\t')
+
+p_atac_qtl_4 <- ggplot(ATAC_59004, aes(x=as.factor(genotype), y=cpm)) +
+ geom_boxplot(fill='#5166CC', color="black") +
+ theme_classic() +
+ geom_jitter(shape=16, position=position_jitter(0.1)) +
+ labs(y="Read per million", title = "ATAC") +
+ ylim(0, NA) +
+ theme(plot.title = element_text(size=14),
+       axis.title.x = element_blank(),
+       axis.title.y = element_text(size=12),
+       axis.text.x = element_blank(),
+       axis.text.y = element_text(size=12))
+
+## H3K4me1
+
+H3K4me1_5 <- read.csv('../data/Fig4/qtl/H3K4me1_5_124340065_124345334.cpm.boxplot.txt', header = T, sep ='\t')
+
+p_h3k4me1_qtl_4 <- ggplot(H3K4me1_5, aes(x=as.factor(genotype), y=cpm)) +
+ geom_boxplot(fill='#E7B800', color="black") +
+ theme_classic() +
+ geom_jitter(shape=16, position=position_jitter(0.1)) +
+ labs(y="Read per million", title = "H3K4me1") +
+ ylim(0, NA) +
+ theme(plot.title = element_text(size=14),
+       axis.title.x = element_blank(),
+       axis.title.y = element_text(size=12),
+       axis.text.x = element_blank(),
+       axis.text.y = element_text(size=12))
+
+## H3K27ac
+
+H3K27ac_5 <- read.csv('../data/Fig4/qtl/H3K27ac_5_124339830_124348198.cpm.boxplot.txt', header = T, sep ='\t')
+
+p_h3k27ac_qtl_4 <- ggplot(H3K27ac_5, aes(x=as.factor(genotype), y=cpm)) +
+ geom_boxplot(fill='#009E73', color="black") +
+ theme_classic() +
+ geom_jitter(shape=16, position=position_jitter(0.1)) +
+ labs(y="Read per million", title = "H3K27ac") +
+ ylim(0, NA) +
+ theme(plot.title = element_text(size=14),
+       axis.title.x = element_blank(),
+       axis.title.y = element_text(size=12),
+       axis.text.x = element_blank(),
+       axis.text.y = element_text(size=12))
+
+
+p_4_h <- p_pu1_qtl_4 +
+ p_atac_qtl_4 +
+ p_h3k4me1_qtl_4 +
+ p_h3k27ac_qtl_4 +
+ plot_layout(nrow = 2, ncol = 2, widths = c(1,1), heights = c(1,1))
+
+## Figure 4i  - ZNF608 expression across blood cell types (related to lymphocytes)
 heme_RNA <- read.csv('~/Projects/PU1_gwas/plots/heme_RNA.txt', header = T, sep ='\t', row.names = 1)
 ZNF608_RNA <- transpose((heme_RNA / colSums(heme_RNA) * 10^6)["ZNF608",1:49])
 celltype <- c("HSC", "HSC", "HSC", "HSC", "MPP", "MPP", "MPP", "MPP", "LMPP", "LMPP", "LMPP", "CMP", "CMP", "CMP", "CMP", "GMP", "GMP", "GMP", "GMP", "MEP", "MEP", "MEP", "MEP", "Mono", "Mono", "Mono", "Mono", "CD4T", "CD4T", "CD4T", "CD4T", "CD8T", "CD8T", "CD8T", "CD8T", "NK", "NK", "NK", "NK", "B", "B", "B", "B", "CLP", "CLP", "CLP", "Ery", "Ery", "Ery")
 ZNF608_RNA["celltype"] <- celltype
 
-p_4_h <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B", "CD4T", "CD8T", "NK")) %>%
+p_4_i <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B", "CD4T", "CD8T", "NK")) %>%
  mutate(celltype = factor(celltype, levels=c("NK", "CD8T",  "CD4T", "B", "CLP", "LMPP", "MPP", "HSC"))) %>%
  ggplot(aes(x=celltype, y=(V1+0.1), fill=celltype)) +
  geom_boxplot(color="black") + geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -253,86 +330,11 @@ p_4_h <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B"
  coord_flip()
 
 
-## Figure i
-### Regulatory QTLs
 
-## PU.1 peak
-
-PU1_27777 <- read.csv('../data/Fig4/qtl/PU1_27777.cpm.boxplot.txt', header = T, sep ='\t')
-
-# Adding allele dosage 2 because there were no samples with homozygous alternate alleles
-p_pu1_qtl_4 <- PU1_27777 %>% mutate(genotype = factor(genotype, levels=c("0", "1", "2"))) %>%
- ggplot(aes(x=genotype, y=cpm)) +
-  geom_boxplot(fill='#46ACC8', color="black") +
-  theme_classic() +
-  geom_jitter(shape=16, position=position_jitter(0.1)) +
-  labs(y="Read per million", title = "PU.1 ChIP") +
-  ylim(0, NA) +
-  scale_x_discrete(breaks=factor(0:2), drop = F) +
-  theme(plot.title = element_text(size=14),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size=12),
-        axis.text.x = element_blank(),
-        axis.text.y = element_text(size=12))
-
-## ATAC peak over PU.1 peak
-
-ATAC_59004 <- read.csv('../data/Fig4/qtl/ATAC_59004.cpm.boxplot.txt', header = T, sep ='\t')
-
-p_atac_qtl_4 <- ggplot(ATAC_59004, aes(x=as.factor(genotype), y=cpm)) +
-  geom_boxplot(fill='#5166CC', color="black") +
-  theme_classic() +
-  geom_jitter(shape=16, position=position_jitter(0.1)) +
-  labs(y="Read per million", title = "ATAC") +
-  ylim(0, NA) +
-  theme(plot.title = element_text(size=14),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size=12),
-        axis.text.x = element_blank(),
-        axis.text.y = element_text(size=12))
-
-## H3K4me1
-
-H3K4me1_5 <- read.csv('../data/Fig4/qtl/H3K4me1_5_124340065_124345334.cpm.boxplot.txt', header = T, sep ='\t')
-
-p_h3k4me1_qtl_4 <- ggplot(H3K4me1_5, aes(x=as.factor(genotype), y=cpm)) +
-  geom_boxplot(fill='#E7B800', color="black") +
-  theme_classic() +
-  geom_jitter(shape=16, position=position_jitter(0.1)) +
-  labs(y="Read per million", title = "H3K4me1") +
-  ylim(0, NA) +
-  theme(plot.title = element_text(size=14),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size=12),
-        axis.text.x = element_blank(),
-        axis.text.y = element_text(size=12))
-
-## H3K27ac
-
-H3K27ac_5 <- read.csv('../data/Fig4/qtl/H3K27ac_5_124339830_124348198.cpm.boxplot.txt', header = T, sep ='\t')
-
-p_h3k27ac_qtl_4 <- ggplot(H3K27ac_5, aes(x=as.factor(genotype), y=cpm)) +
-  geom_boxplot(fill='#009E73', color="black") +
-  theme_classic() +
-  geom_jitter(shape=16, position=position_jitter(0.1)) +
-  labs(y="Read per million", title = "H3K27ac") +
-  ylim(0, NA) +
-  theme(plot.title = element_text(size=14),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size=12),
-        axis.text.x = element_blank(),
-        axis.text.y = element_text(size=12))
-
-
-p_4_i <- p_pu1_qtl_4 +
-  p_atac_qtl_4 +
-  p_h3k4me1_qtl_4 +
-  p_h3k27ac_qtl_4 +
-  plot_layout(nrow = 2, ncol = 2, widths = c(1,1), heights = c(1,1))
 
 
 ## Plotting Fig4h,i together
-p_4_hi <- cowplot::plot_grid(p_4_h, p_4_i, nrow = 2, rel_heights = c(6,5))
+p_4_hi <- cowplot::plot_grid(p_4_h, p_4_i, nrow = 2, rel_heights = c(5,6))
 
 ggplot2::ggsave('../figures/Fig4hi.pdf',
                 plot = p_4_hi,
