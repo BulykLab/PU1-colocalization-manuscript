@@ -1,5 +1,5 @@
 # PU1-colocalization-manuscript
-This repository contains codes and data for generating figures to Jeong and Bulyk (in prep).
+This repository contains code and data for generating figures to Jeong and Bulyk (in prep).
 
 Updated September 6th 2022. Raehoon Jeong (rjeong@g.harvard.edu), Martha Bulyk Lab (mlbulyk@genetics.med.harvard.edu).
 
