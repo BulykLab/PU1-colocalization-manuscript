@@ -1,3 +1,0 @@
-source	beta	se
-Lym count	0.014241	0.0020242999999999997
-PU.1 binding	1.43989	0.2052906
