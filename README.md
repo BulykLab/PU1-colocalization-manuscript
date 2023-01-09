@@ -34,5 +34,5 @@ cd PU1-colocalization-manuscript/codes
 ```
 3) Run each code to generate figures using R
 ```
-Rscript MainFigure2.R   # or any other code in the directory
+Rscript Figure2.R   # or any other code in the directory
 ```
