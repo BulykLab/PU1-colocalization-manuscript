@@ -8,7 +8,7 @@ library(patchwork)
 source("misc/locuscompare_updated.R")
 
 
-## Ext. Data Fig. 5a - Merged association plot
+## Figure S9a - Merged association plot
 
 ## Lym count GWAS
 lym_count_file = "../data/Fig6/ZC2HC1A.lym_count.metal.txt"
@@ -33,7 +33,7 @@ names(size) = merged_lym$rsid
 
 merged_lym$label = ifelse(merged_lym$rsid == snp, merged_lym$rsid, '')
 
-p_extdata_5a <- ggplot(merged_lym, aes(x=logp1, y=logp2)) +
+p_supp_9a <- ggplot(merged_lym, aes(x=logp1, y=logp2)) +
   geom_point(aes(fill = rsid, size = rsid, shape = rsid), alpha = 0.8) +
   theme_minimal() +
   scale_fill_manual(values = color, guide = "none") +
@@ -49,11 +49,11 @@ p_extdata_5a <- ggplot(merged_lym, aes(x=logp1, y=logp2)) +
 
 
 
-## Ext. Data Fig. 5b - Z score plot
+## Figure S9b - Z score plot
 
-blood_rs3808619_effects <- read.csv('../data/ExtDataFig5/blood_rs3808619_effects.txt', header = T, sep='\t')
+blood_rs3808619_effects <- read.csv('../data/FigS9/blood_rs3808619_effects.txt', header = T, sep='\t')
 
-p_extdata_5b <- blood_rs3808619_effects %>% mutate(source = factor(source, levels=c("PU.1 binding", "Lym count", "Lym %", "Mono %", "Neut %", "WBC count"))) %>%
+p_supp_9b <- blood_rs3808619_effects %>% mutate(source = factor(source, levels=c("PU.1 binding", "Lym count", "Lym %", "Mono %", "Neut %", "WBC count"))) %>%
   ggplot(aes(y = beta / se, x= source)) +
   geom_col(aes(fill=(beta < 0)), color="black") +
   theme_classic() + background_grid(major = 'y') +
@@ -64,9 +64,9 @@ p_extdata_5b <- blood_rs3808619_effects %>% mutate(source = factor(source, level
        legend.position="none", aspect.ratio = 1) +
   geom_vline(xintercept=0, size=1) + ylab("Z score (rs3808619)")
 
-## Ext. Data Fig. 5c - Merged association plot with MS GWAS
+## Figure S9c - Merged association plot with MS GWAS
 
-ms_2013_file = "../data/ExtDataFig5/ZC2HC1A_MS_2013.metal.txt"
+ms_2013_file = "../data/FigS9/ZC2HC1A_MS_2013.metal.txt"
 gwas_stat = read_metal(ms_2013_file, marker_col = 'rsid', pval_col = 'pval')
 
 merged_ms = merge(gwas_stat, pu1_stat, by = "rsid", suffixes = c("1", "2"), all = FALSE)
@@ -85,7 +85,7 @@ names(size) = merged_ms$rsid
 
 merged_ms$label = ifelse(merged_ms$rsid == snp, merged_ms$rsid, '')
 
-p_extdata_5c <- ggplot(merged_ms, aes(x=logp1, y=logp2)) +
+p_supp_9c <- ggplot(merged_ms, aes(x=logp1, y=logp2)) +
   geom_point(aes(fill = rsid, size = rsid, shape = rsid), alpha = 0.8) +
   theme_minimal() +
   scale_fill_manual(values = color, guide = "none") +
@@ -101,11 +101,11 @@ p_extdata_5c <- ggplot(merged_ms, aes(x=logp1, y=logp2)) +
 
 
 
-## Ext. Data Fig. 5d - Z score plot
+## Figure S9d - Z score plot
 
-MS_rs3808619_effects <- read.csv('../data/ExtDataFig5/MS_rs3808619_effects.txt', header = T, sep='\t')
+MS_rs3808619_effects <- read.csv('../data/FigS9/MS_rs3808619_effects.txt', header = T, sep='\t')
 
-p_extdata_5d <- ggplot(MS_rs3808619_effects, aes(y = beta / se, x= source)) +
+p_supp_9d <- ggplot(MS_rs3808619_effects, aes(y = beta / se, x= source)) +
  geom_col(fill="#F8766D", color="black") +
  theme_classic() + background_grid(major = 'y') +
  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
@@ -115,9 +115,9 @@ p_extdata_5d <- ggplot(MS_rs3808619_effects, aes(y = beta / se, x= source)) +
  geom_vline(xintercept=0, size=1) + ylab("Z score (rs3808619)")
 
 
-p_extdata_5 <- p_extdata_5a + p_extdata_5b + p_extdata_5c + p_extdata_5d + plot_layout(nrow = 2, ncol = 2, widths = c(1,0.5))
+p_supp_9 <- p_supp_9a + p_supp_9b + p_supp_9c + p_supp_9d + plot_layout(nrow = 2, ncol = 2, widths = c(1,0.5))
 
-ggplot2::ggsave('../figures/ExtDataFig5.pdf',
-               plot = p_extdata_5,
+ggplot2::ggsave('../figures/FigS9.pdf',
+               plot = p_supp_9,
                device='pdf',
                width=300, height=300, units="mm")

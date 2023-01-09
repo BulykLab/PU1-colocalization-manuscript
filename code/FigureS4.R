@@ -10,7 +10,7 @@ library(patchwork)
 
 ## Figure S4b - gkmSVM vs per-allele effect size
 
-pu1_gkmsvm <- read.csv('../data/ExtDataFig2/PU1_motif_score_bqtl.txt', header = T, sep = '\t')
+pu1_gkmsvm <- read.csv('../data/FigS4/PU1_motif_score_bqtl.txt', header = T, sep = '\t')
 
 
 # gkmsvm
