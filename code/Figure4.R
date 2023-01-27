@@ -71,7 +71,6 @@ names(size) = gwas_stat$rsid
 gwas_stat$label = ifelse(gwas_stat$rsid == snp, gwas_stat$rsid, '')
 
 metal = gwas_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-#colnames(metal)[which(colnames(metal) == 'logp1')] = 'logp'
 title = "Lymphocyte count GWAS"
 p_gwas <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
 p_gwas <- p_gwas + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
@@ -96,10 +95,8 @@ names(size) = pu1_stat$rsid
 pu1_stat$label = ifelse(pu1_stat$rsid == snp, pu1_stat$rsid, '')
 
 metal = pu1_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-#colnames(metal)[which(colnames(metal) == 'logp1')] = 'logp'
 title = "PU.1 bQTL"
 p_pu1 <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
-#title = expression(paste(italic('PU.1'), " bQTL"))
 p_pu1 <- p_pu1 + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
   geom_point(aes(x=124341259, y=pu1_stat[pu1_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") +
   geom_point(aes(x=124285447, y=pu1_stat[pu1_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow") + labs(title = title)
@@ -109,7 +106,6 @@ p_pu1 <- p_pu1 + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xin
 eqtl_file = "../data/Fig4/ZNF608.LCL_eqtl.metal.txt"
 eqtl_stat = read_metal(eqtl_file, marker_col = 'rsid', pval_col = 'pval')
 eqtl_stat = get_position(eqtl_stat)
-#snp = 'rs12517864'
 snp = 'rs2028854'
 ld = retrieve_LD(chr, snp, population)
 color = assign_color2(eqtl_stat$rsid, snp, ld)
@@ -121,14 +117,11 @@ size = ifelse(eqtl_stat$rsid == snp, 3, 2)
 names(size) = eqtl_stat$rsid
 
 eqtl_stat$label = ifelse((eqtl_stat$rsid == 'rs2028854'), eqtl_stat$rsid, '')
-#eqtl_stat$label = ifelse((eqtl_stat$rsid == snp | eqtl_stat$rsid == 'rs2028854'), eqtl_stat$rsid, '')
 
 metal = eqtl_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-#colnames(metal)[which(colnames(metal) == 'logp1')] = 'logp'
 title = "ZNF608 eQTL"
 p_eqtl <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
 title <- expression(paste(italic('ZNF608'), " eQTL (LCLs)"))
-#title <- expression(paste(italic('ZNF608'), " eQTL"))
 p_eqtl <- p_eqtl + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
   geom_point(aes(x=124285447, y=eqtl_stat[eqtl_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow")+
   geom_point(aes(x=124341259, y=eqtl_stat[eqtl_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") + labs(title = title)
@@ -152,7 +145,6 @@ eqtl_cond_stat$label = ifelse(eqtl_cond_stat$rsid == snp, eqtl_cond_stat$rsid, '
 
 
 metal = eqtl_cond_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-#colnames(metal)[which(colnames(metal) == 'logp1')] = 'logp'
 title <- "ZNF608 eQTL (LCLs) conditioned on rs2028854"
 p_eqtl_cond <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
 title <- expression(paste(italic('ZNF608'), " eQTL (LCLs) conditioned on rs2028854"))
@@ -214,30 +206,8 @@ p_bcell_eqtl <- p_bcell_eqtl + geom_vline(xintercept = 124341259, linetype=2) + 
   theme(axis.title.x = element_text(size=14), axis.text.x = element_text(size=12))
 
 
-
-
-
-
 #### Plotting together
-#p_4_acdeg <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(breaks = c(0,5,10)) +
-#  p_gwas + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1)), breaks = c(0,5,10)) +
-#  p_eqtl + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.15)),breaks = c(0,5,10)) +
-#  p_eqtl_cond +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.4))) +
-#  p_fm + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14), legend.key.height = unit(0.3,'cm')) +
-#  p_bcell_eqtl +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1))) +
-#  p_znf608 +
-#  plot_layout(nrow = 7, heights = c(3, 3, 3, 3, 3, 3, 2))
-
-
-#ggplot2::ggsave('../figures/Fig4acdeg.pdf',
-#       plot = p_4_acdeg,
-#       device='pdf',
-#       width=200, height=200, units="mm")
-
-
-
-#### Plotting together
-p_4_aefgh <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(breaks = c(0,5,10)) +
+p_4_aefgi <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(breaks = c(0,5,10)) +
   p_gwas + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1)), breaks = c(0,5,10)) +
   p_znf608 +
   p_eqtl + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.15)),breaks = c(0,5,10)) +
@@ -247,13 +217,13 @@ p_4_aefgh <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element
   plot_layout(nrow = 7, heights = c(3, 3, 3, 3, 3, 3, 3))
 
 
-ggplot2::ggsave('../figures/Fig4aefgh.pdf',
-                plot = p_4_aefgh,
+ggplot2::ggsave('../figures/Fig4aefgi.pdf',
+                plot = p_4_aefgi,
                 device='pdf',
                 width=200, height=210, units="mm")
 
 
-## Figure h
+## Figure d
 ### Regulatory QTLs
 
 ## PU.1 peak
@@ -330,13 +300,13 @@ p_4_d <- p_pu1_qtl_4 +
  p_h3k27ac_qtl_4 +
  plot_layout(nrow = 2, ncol = 2, widths = c(1,1), heights = c(1,1))
 
-## Figure 4i  - ZNF608 expression across blood cell types (related to lymphocytes)
+## Figure 4h  - ZNF608 expression across blood cell types (related to lymphocytes)
 heme_RNA <- read.csv('~/Projects/PU1_gwas/plots/heme_RNA.txt', header = T, sep ='\t', row.names = 1)
 ZNF608_RNA <- transpose((heme_RNA / colSums(heme_RNA) * 10^6)["ZNF608",1:49])
 celltype <- c("HSC", "HSC", "HSC", "HSC", "MPP", "MPP", "MPP", "MPP", "LMPP", "LMPP", "LMPP", "CMP", "CMP", "CMP", "CMP", "GMP", "GMP", "GMP", "GMP", "MEP", "MEP", "MEP", "MEP", "Mono", "Mono", "Mono", "Mono", "CD4T", "CD4T", "CD4T", "CD4T", "CD8T", "CD8T", "CD8T", "CD8T", "NK", "NK", "NK", "NK", "B", "B", "B", "B", "CLP", "CLP", "CLP", "Ery", "Ery", "Ery")
 ZNF608_RNA["celltype"] <- celltype
 
-p_4_i <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B", "CD4T", "CD8T", "NK")) %>%
+p_4_h <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B", "CD4T", "CD8T", "NK")) %>%
  mutate(celltype = factor(celltype, levels=c("NK", "CD8T",  "CD4T", "B", "CLP", "LMPP", "MPP", "HSC"))) %>%
  ggplot(aes(x=celltype, y=(V1+0.1), fill=celltype)) +
  geom_boxplot(color="black") + geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -351,12 +321,10 @@ p_4_i <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B"
 
 
 
-
-
 ## Plotting Fig4h,i together
-p_4_di <- cowplot::plot_grid(p_4_d, p_4_i, nrow = 2, rel_heights = c(5,6))
+p_4_dh <- cowplot::plot_grid(p_4_d, p_4_h, nrow = 2, rel_heights = c(5,6))
 
-ggplot2::ggsave('../figures/Fig4di.pdf',
-                plot = p_4_di,
+ggplot2::ggsave('../figures/Fig4dh.pdf',
+                plot = p_4_dh,
                 device='pdf',
                 width=105, height=180, units="mm")
