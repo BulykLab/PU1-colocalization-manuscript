@@ -209,7 +209,9 @@ p_bcell_eqtl <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, 
 title <- expression(paste(italic('ZNF608'), " eQTL (Naive B cells)"))
 p_bcell_eqtl <- p_bcell_eqtl + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
   geom_point(aes(x=124285447, y=bcell_eqtl_stat[bcell_eqtl_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow") +
-  geom_point(aes(x=124341259, y=bcell_eqtl_stat[bcell_eqtl_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") + labs(title = title)
+  geom_point(aes(x=124341259, y=bcell_eqtl_stat[bcell_eqtl_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") + 
+  labs(title = title) +
+  theme(axis.title.x = element_text(size=14), axis.text.x = element_text(size=12))
 
 
 
@@ -217,20 +219,38 @@ p_bcell_eqtl <- p_bcell_eqtl + geom_vline(xintercept = 124341259, linetype=2) + 
 
 
 #### Plotting together
-p_4_acdeg <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(breaks = c(0,5,10)) +
+#p_4_acdeg <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(breaks = c(0,5,10)) +
+#  p_gwas + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1)), breaks = c(0,5,10)) +
+#  p_eqtl + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.15)),breaks = c(0,5,10)) +
+#  p_eqtl_cond +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.4))) +
+#  p_fm + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14), legend.key.height = unit(0.3,'cm')) +
+#  p_bcell_eqtl +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1))) +
+#  p_znf608 +
+#  plot_layout(nrow = 7, heights = c(3, 3, 3, 3, 3, 3, 2))
+
+
+#ggplot2::ggsave('../figures/Fig4acdeg.pdf',
+#       plot = p_4_acdeg,
+#       device='pdf',
+#       width=200, height=200, units="mm")
+
+
+
+#### Plotting together
+p_4_aefgh <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(breaks = c(0,5,10)) +
   p_gwas + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1)), breaks = c(0,5,10)) +
+  p_znf608 +
   p_eqtl + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.15)),breaks = c(0,5,10)) +
   p_eqtl_cond +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.4))) +
   p_fm + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14), legend.key.height = unit(0.3,'cm')) +
-  p_bcell_eqtl +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1))) +
-  p_znf608 +
-  plot_layout(nrow = 7, heights = c(3, 3, 3, 3, 3, 3, 2))
+  p_bcell_eqtl + theme(axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1)), breaks = c(0,2,4)) +
+  plot_layout(nrow = 7, heights = c(3, 3, 3, 3, 3, 3, 3))
 
 
-ggplot2::ggsave('../figures/Fig4acdeg.pdf',
-       plot = p_4_acdeg,
-       device='pdf',
-       width=200, height=200, units="mm")
+ggplot2::ggsave('../figures/Fig4aefgh.pdf',
+                plot = p_4_aefgh,
+                device='pdf',
+                width=200, height=210, units="mm")
 
 
 ## Figure h
@@ -304,7 +324,7 @@ p_h3k27ac_qtl_4 <- ggplot(H3K27ac_5, aes(x=as.factor(genotype), y=cpm)) +
        axis.text.y = element_text(size=12))
 
 
-p_4_h <- p_pu1_qtl_4 +
+p_4_d <- p_pu1_qtl_4 +
  p_atac_qtl_4 +
  p_h3k4me1_qtl_4 +
  p_h3k27ac_qtl_4 +
@@ -334,9 +354,9 @@ p_4_i <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B"
 
 
 ## Plotting Fig4h,i together
-p_4_hi <- cowplot::plot_grid(p_4_h, p_4_i, nrow = 2, rel_heights = c(5,6))
+p_4_di <- cowplot::plot_grid(p_4_d, p_4_i, nrow = 2, rel_heights = c(5,6))
 
-ggplot2::ggsave('../figures/Fig4hi.pdf',
-                plot = p_4_hi,
+ggplot2::ggsave('../figures/Fig4di.pdf',
+                plot = p_4_di,
                 device='pdf',
                 width=105, height=180, units="mm")
