@@ -17,8 +17,10 @@ p_lrrc25_rna_all <- ggplot(LRRC25_RNA, aes(x=reorder(as.factor(celltype), -V1), 
   theme_classic() + scale_y_continuous(trans='log10') +
   scale_fill_manual(values = c("#B8B4B4", "#FF7373")) +
   labs(y=expression(paste(italic('LRRC25'), " count per million")), x = "Cell type") +
-  theme(axis.title.x = element_text(size=18, face="bold"), axis.title.y = element_text(size=18, face="bold"),
-        axis.text.x = element_text(face="bold", size=14), axis.text.y = element_text(face="bold", size=14),
+  theme(axis.title.x = element_text(size=18),
+        axis.title.y = element_text(size=18),
+        axis.text.x = element_text(size=14),
+        axis.text.y = element_text(size=14),
         legend.position="none")
 
 ggplot2::ggsave('../figures/FigS8.pdf',
