@@ -8,7 +8,8 @@ Updated April 6th 2023. Raehoon Jeong (rjeong@g.harvard.edu), Martha Bulyk Lab (
 - Genome track images of PU.1 ChIP-seq, ATAC-seq, etc. were generated using <a href="https://software.broadinstitute.org/software/igv/">IGV browser</a>.
 - Fuji plot in Figure 3 was generated using code from <a href="https://github.com/mkanai/fujiplot">Masahiro Kanai</a>.
 - Canonical transcripts of genes were plotted using database from <a href="https://github.com/mkanai/locusviz/tree/master/inst/extdata">Locusviz</a>.  
-- The <a href="https://github.com/BulykLab/PU1-colocalization-manuscript/blob/main/figures/r2_panel.pdf">legend for colors reflecting LD with selected variants</a> were added individually.
+- The <a href="https://github.com/BulykLab/PU1-colocalization-manuscript/blob/main/figures/r2_panel.pdf">legend for colors reflecting LD with selected variants</a> were added manually.
+- Relevant analyses scripts are included in <a href="https://github.com/BulykLab/PU1-colocalization-manuscript/tree/main/code/analysis">PU1-colocalization-manuscript/code/analysis</a> directory.
 - For the other R scripts, the following packages need to be installed.
 ```
 ggplot2
@@ -29,9 +30,9 @@ ComplexUpset
 ```
 git clone git@github.com:BulykLab/PU1-colocalization-manuscript.git
 ```
-2) Move to codes directory
+2) Move to the code directory
 ```
-cd PU1-colocalization-manuscript/codes
+cd PU1-colocalization-manuscript/code
 ```
 3) Run each code to generate figures using R
 ```
