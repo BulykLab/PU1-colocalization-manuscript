@@ -1,330 +1,182 @@
-library(AnnotationDbi)
-library(ggbio)
-library(GenomicRanges)
-library(locuscomparer)
-library(patchwork)
-library(dplyr)
 library(ggplot2)
+library(dplyr)
+library(patchwork)
 library(cowplot)
-library(data.table)
+library(ComplexUpset)
 
-source("misc/locuscompare_updated.R")
+### Figure 4a Number of overlap
+pu1_qtl_numbers <- read.table('../data/Fig4/QTL_numbers_table.txt', header = T)
 
-chr = "5"
-start <- 123952000
-end <- 124520000
-
-txdb <- AnnotationDbi::loadDb("../data/misc/txdb_v19_hg19.sqlite")
-
-gr = GenomicRanges::GRanges(seqnames = "chr5", ranges = IRanges(123800000, 125000000))
-
-
-##
-# Size of red curves determined by B cell PCHiC data (Javierre et al. 2016)
-p_znf608 <- ggplot() + theme_classic() +
-  geom_alignment(
-    txdb,
-    which = gr,
-    cds.rect.h = 0.1,
-    color = "black",
-    fill = "black",
-    label.size = 5,
-    arrow.rate = 0,
-    length = unit(0.2, "cm"),
-    gap.geom = 'segment'
-  ) +
-  ylim(c(0.75,1.75)) +
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank(),
-        axis.line.y=element_blank(),
-        axis.title.x = element_text(size=14), axis.text.x = element_text(size=12)
-  ) +ylab("") + xlab(paste0('chr',chr,' (Mb)'))+
-  scale_x_continuous(labels=function(x){sprintf('%.1f',x/1e6)}, expand = expansion(mult = c(0, 0)), limit=c(start,end)) +
-  geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2) +
-  geom_curve(aes(x = 124081118, y = 1, xend = 124341259, yend = 1), size=2.297, curvature = -0.16, color = "#FF6379") +
-  geom_curve(aes(x = 124081118, y = 1, xend = 124285447, yend = 1), size=0.963, curvature = -0.1, color = "#FF6379") +
-  geom_point(aes(x = 124341259, y=1), shape=23, size=3, fill="purple") +
-  geom_point(aes(x = 124285447, y=1), shape=23, size=3, fill="yellow")
+p_4a <- ggplot(pu1_qtl_numbers, aes(x=QTL, y=Num)) +
+  geom_col(aes(fill = QTL, alpha=Type), width = 0.8, color = 'black') +
+  theme_classic() +
+  ylab("Number of \n colocalized PU.1 bQTLs") +
+  theme(axis.title.x = element_blank(), axis.title.y = element_text(size=18),
+        axis.text.x = element_text(size=14), axis.text.y = element_text(size=14),
+        legend.title=element_text(size=16), legend.text=element_text(size=14),
+        aspect.ratio = 1.3) +
+  scale_y_continuous(expand = expansion(mult = c(0, .05))) +
+  scale_fill_manual(values =c('#4051A3', '#007E5C', '#B89300')) +
+  scale_alpha_manual(values = c(0, 0.3, 1), labels = c('No overlap', 'Just overlap', 'QTL')) +
+  guides(fill = "none") +
+  theme(axis.title.x = element_blank(), axis.title.y = element_text(size=14),
+        axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+        legend.title=element_blank(), legend.text=element_text(size=12))
 
 
+### Figure 4b Upset plot
+pu1_upset_input <- read.table('../data/Fig4/QTL_upset_input_wPU1.txt', header = T, sep='\t')
 
-##### Start Here
-snp = NULL
-chr='5'
-population = 'EUR'
-
-
-## lym count GWAS
-gwas_file = "../data/Fig4/ZNF608.lym_count.metal.txt"
-gwas_stat = read_metal(gwas_file, marker_col = 'rsid', pval_col = 'pval')
-gwas_stat = get_position(gwas_stat)
-snp = 'rs12517864'
-ld = retrieve_LD(chr, snp, population)
-color = assign_color2(gwas_stat$rsid, snp, ld)
-
-shape = ifelse(gwas_stat$rsid == snp, 23, 21)
-names(shape) = gwas_stat$rsid
-
-size = ifelse(gwas_stat$rsid == snp, 3, 2)
-names(size) = gwas_stat$rsid
-
-gwas_stat$label = ifelse(gwas_stat$rsid == snp, gwas_stat$rsid, '')
-
-metal = gwas_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-title = "Lymphocyte count GWAS"
-p_gwas <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
-p_gwas <- p_gwas + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
-  geom_point(aes(x=124341259, y=gwas_stat[gwas_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") +
-  geom_point(aes(x=124285447, y=gwas_stat[gwas_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow")
+p_4b <-upset(pu1_upset_input, colnames(pu1_upset_input)[2:5], sort_intersections_by='degree',
+              name = "",
+              base_annotations=list('Intersection size'=intersection_size(counts=FALSE)),
+              sort_sets=FALSE,
+              queries=list(
+                upset_query(set='PU.1 bQTL', fill='#46ACC8'),
+                upset_query(set='caQTL', fill='#4051A3'),
+                upset_query(set="H3K27ac hQTL", fill='#007E5C'),
+                upset_query(set="H3K4me1 hQTL", fill='#B89300')
+              ),
+              themes=upset_modify_themes(
+                list(
+                  'Intersection size'=theme(axis.title.y=element_blank(), axis.text.y=element_text(size=12)),
+                  'overall_sizes'=theme(axis.title.x=element_blank(), axis.text.x=element_text(size=12)),
+                  'intersections_matrix'=theme(axis.text.y=element_text(size=14))
+                )
+              )
+              )
 
 
-## PU1_27777
-pu1_file = "../data/Fig4/PU1_27777.metal.txt"
-pu1_stat = read_metal(pu1_file, marker_col = 'rsid', pval_col = 'pval')
-pu1_stat = get_position(pu1_stat)
-snp = 'rs12517864'
-ld = retrieve_LD(chr, snp, population)
-color = assign_color2(pu1_stat$rsid, snp, ld)
+### Figure 4c QTL effect comparison
+## PU1 and ATAC
+pu1_atac_data <- read.table('../data/Fig4/PU1_ATAC_comparison.txt', header = T)
 
-shape = ifelse(pu1_stat$rsid == snp, 23, 21)
-names(shape) = pu1_stat$rsid
+p_pu1_atac <- ggplot(pu1_atac_data, aes(x=beta_atac, y=beta_pu1,
+                                        xmin=beta_atac - se_atac, xmax=beta_atac + se_atac,
+                                        ymin=beta_pu1 - se_pu1, ymax=beta_pu1 + se_pu1,
+                                        alpha=(significant == 'O'))) +
+  geom_point(size = 2, color = '#4051A3') + geom_errorbar(color = '#4051A3') + geom_errorbarh(color = '#4051A3') +
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  scale_alpha_manual(values=c(0.3,1)) +
+  lims(x = c(-2,2), y=c(-2,2)) +
+  labs(x="caQTL effect", y="PU.1 bQTL effect") +
+  theme_minimal() + 
+  theme(axis.title.x = element_text(size=14), axis.title.y = element_text(size=14),
+        axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+        legend.position="none", aspect.ratio = 1)
 
-size = ifelse(pu1_stat$rsid == snp, 3, 2)
-names(size) = pu1_stat$rsid
-
-pu1_stat$label = ifelse(pu1_stat$rsid == snp, pu1_stat$rsid, '')
-
-metal = pu1_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-title = "PU.1 bQTL"
-p_pu1 <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
-p_pu1 <- p_pu1 + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
-  geom_point(aes(x=124341259, y=pu1_stat[pu1_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") +
-  geom_point(aes(x=124285447, y=pu1_stat[pu1_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow") + labs(title = title)
-
-
-## ZNF608
-eqtl_file = "../data/Fig4/ZNF608.LCL_eqtl.metal.txt"
-eqtl_stat = read_metal(eqtl_file, marker_col = 'rsid', pval_col = 'pval')
-eqtl_stat = get_position(eqtl_stat)
-snp = 'rs2028854'
-ld = retrieve_LD(chr, snp, population)
-color = assign_color2(eqtl_stat$rsid, snp, ld)
-
-shape = ifelse(eqtl_stat$rsid == snp, 23, 21)
-names(shape) = eqtl_stat$rsid
-
-size = ifelse(eqtl_stat$rsid == snp, 3, 2)
-names(size) = eqtl_stat$rsid
-
-eqtl_stat$label = ifelse((eqtl_stat$rsid == 'rs2028854'), eqtl_stat$rsid, '')
-
-metal = eqtl_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-title = "ZNF608 eQTL"
-p_eqtl <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
-title <- expression(paste(italic('ZNF608'), " eQTL (LCLs)"))
-p_eqtl <- p_eqtl + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
-  geom_point(aes(x=124285447, y=eqtl_stat[eqtl_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow")+
-  geom_point(aes(x=124341259, y=eqtl_stat[eqtl_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") + labs(title = title)
+#cor.test((pu1_atac_data %>% filter(significant == 'O'))$beta_pu1, (pu1_atac_data %>% filter(significant == 'O'))$beta_atac)$estimate
+# 0.9392347
+#cor.test((pu1_atac_data %>% filter(significant == 'O'))$beta_pu1, (pu1_atac_data %>% filter(significant == 'O'))$beta_atac)$p.value
+# 4.023967e-14
 
 
-## ZNF608 conditioned on rs2028854
-eqtl_cond_file = "../data/Fig4/ZNF608.LCL_cond_eqtl.metal.txt"
-eqtl_cond_stat = read_metal(eqtl_cond_file, marker_col = 'rsid', pval_col = 'pval')
-eqtl_cond_stat = get_position(eqtl_cond_stat)
-snp = 'rs12517864'
-ld = retrieve_LD(chr, snp, population)
-color = assign_color2(eqtl_cond_stat$rsid, snp, ld)
+## PU1 and H3K27ac
+pu1_h3k27ac_data <- read.table('../data/Fig4/PU1_H3K27ac_comparison.txt', header = T)
 
-shape = ifelse(eqtl_cond_stat$rsid == snp, 23, 21)
-names(shape) = eqtl_cond_stat$rsid
+p_pu1_h3k27ac <- ggplot(pu1_h3k27ac_data, aes(x=beta_histone, y=beta_pu1, 
+                                              xmin=beta_histone - se_histone, xmax=beta_histone + se_histone,
+                                              ymin=beta_pu1 - se_pu1, ymax=beta_pu1 + se_pu1,
+                                              alpha=(significant == 'O'),
+                                              color=(significant != 'Z'))) +
+  geom_point(size = 2) + geom_errorbar() + geom_errorbarh() +
+  guides(color = "none") +
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  scale_alpha_manual(values =c(0.3,1), labels = c('Just overlap', 'QTL')) +
+  scale_color_manual(values = c('#007E5C', 'white')) +
+  lims(x = c(-2,2), y=c(-2,2)) +
+  labs(x="H3K27ac hQTL effect", y="") +
+  theme_minimal() + 
+  theme(axis.title.x = element_text(size=14), axis.title.y = element_blank(), 
+        axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+        legend.position="top", legend.title = element_blank(),
+        legend.text=element_text(size=14), aspect.ratio = 1)
 
-size = ifelse(eqtl_cond_stat$rsid == snp, 3, 2)
-names(size) = eqtl_cond_stat$rsid
-
-eqtl_cond_stat$label = ifelse(eqtl_cond_stat$rsid == snp, eqtl_cond_stat$rsid, '')
-
-
-metal = eqtl_cond_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-title <- "ZNF608 eQTL (LCLs) conditioned on rs2028854"
-p_eqtl_cond <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
-title <- expression(paste(italic('ZNF608'), " eQTL (LCLs) conditioned on rs2028854"))
-p_eqtl_cond <- p_eqtl_cond + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
-  geom_point(aes(x=124341259, y=eqtl_cond_stat[eqtl_cond_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") +
-  geom_point(aes(x=124285447, y=eqtl_cond_stat[eqtl_cond_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow") + labs(title = title)
-
-## SUSIE fine-mapping
-znf608_susie <- read.csv('../data/Fig4/ZNF608.LCL_eqtl.susie.txt', header = T, sep ='\t')
-znf608_susie$credible_set <- as.factor(znf608_susie$credible_set)  # credible set id
-znf608_susie$color <- ifelse(znf608_susie$credible_set == 1, "#00AFBB", "#FC4E07")
-
-title = "ZNF608 eQTL credible sets (SuSiE)"
-
-p_fm <- ggplot(znf608_susie, aes(x=pos, y=pip, fill=credible_set)) +
-  geom_point(alpha=1, shape=21, size=2) + theme_classic() +
-  labs(y="PIP", x = "chr5", fill="Credible set ID", title = title) +
-  scale_fill_manual(values = c("#00AFBB", "#FC4E07")) +
-  scale_x_continuous(lim = c(start, end), expand = expansion(mult = c(0, 0))) +
-  scale_y_continuous(lim = c(0,1), breaks = seq(0,1, 0.5)) +
-  theme(legend.position = c(0.9, 0.55),
-        legend.title=element_text(size=11), legend.text = element_text(size=11), # legend.background = element_rect(fill = "white", color = "black"),
-        plot.title = element_text(
-          hjust = 1e-2,
-          margin = margin(b = -12 * (stringr::str_count(title, "\n") + 1)))
-        ) +
-  geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2) +
-  geom_point(aes(x=124341259, y=znf608_susie[znf608_susie$pos ==124341259,]$pip), shape=23, size=3, fill="purple") +
-  geom_point(aes(x=124285447, y=znf608_susie[znf608_susie$pos ==124285447,]$pip), shape=23, size=3, fill="yellow")
-
-title <- expression(paste(italic('ZNF608'), " eQTL (LCLs) credible sets (SuSiE)"))
-p_fm <- p_fm + labs(title = title)
+#cor.test((pu1_h3k27ac_data %>% filter(significant == 'O'))$beta_pu1, (pu1_h3k27ac_data %>% filter(significant == 'O'))$beta_histone)$estimate
+# 0.9392347
+#cor.test((pu1_h3k27ac_data %>% filter(significant == 'O'))$beta_pu1, (pu1_h3k27ac_data %>% filter(significant == 'O'))$beta_histone)$p.value
+# 4.023967e-14
 
 
-## B cells
-bcell_eqtl_file = "../data/Fig4/ZNF608.Bcell_naive_eqtl.metal.txt"
-bcell_eqtl_stat = read_metal(bcell_eqtl_file, marker_col = 'rsid', pval_col = 'pval')
-bcell_eqtl_stat = get_position(bcell_eqtl_stat)
-snp = 'rs12517864'
-ld = retrieve_LD(chr, snp, population)
-color = assign_color2(bcell_eqtl_stat$rsid, snp, ld)
+## PU1 and H3K4me1
+pu1_h3k4me1_data <- read.table('../data/Fig4/PU1_H3K4me1_comparison.txt', header = T)
 
-shape = ifelse(bcell_eqtl_stat$rsid == snp, 23, 21)
-names(shape) = bcell_eqtl_stat$rsid
+p_pu1_h3k4me1 <- ggplot(pu1_h3k4me1_data, aes(x=beta_histone, y=beta_pu1, 
+                                              xmin=beta_histone - se_histone, xmax=beta_histone + se_histone,
+                                              ymin=beta_pu1 - se_pu1, ymax=beta_pu1 + se_pu1,
+                                              alpha=(significant == 'O'))) +
+  geom_point(size = 2, color ='#B89300') + geom_errorbar(color ='#B89300') + geom_errorbarh(color ='#B89300') +
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  scale_alpha_manual(values = c(0.3,1)) +    ## Modify colors
+  lims(x = c(-2,2), y=c(-2,2)) +
+  labs(x="H3K4me1 hQTL effect") +
+  theme_minimal() +
+  theme(axis.title.x = element_text(size=14), axis.title.y = element_blank(), 
+        axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+        legend.position="none", aspect.ratio = 1)
 
-size = ifelse(bcell_eqtl_stat$rsid == snp, 3, 2)
-names(size) = bcell_eqtl_stat$rsid
-
-bcell_eqtl_stat$label = ifelse((bcell_eqtl_stat$rsid == 'rs12517864'), bcell_eqtl_stat$rsid, '')
-
-metal = bcell_eqtl_stat[, c('rsid', 'logp', 'chr', 'pos', 'label')]
-title = "ZNF608 eQTL"
-p_bcell_eqtl <- make_locuszoom2(metal,title,chr,color,shape,size,range=c(start, end), ylab_linebreak=FALSE)
-title <- expression(paste(italic('ZNF608'), " eQTL (Naive B cells)"))
-p_bcell_eqtl <- p_bcell_eqtl + geom_vline(xintercept = 124341259, linetype=2) + geom_vline(xintercept = 124285447, linetype=2)+
-  geom_point(aes(x=124285447, y=bcell_eqtl_stat[bcell_eqtl_stat$pos ==124285447,]$logp), shape=23, size=3, fill="yellow") +
-  geom_point(aes(x=124341259, y=bcell_eqtl_stat[bcell_eqtl_stat$pos ==124341259,]$logp), shape=23, size=3, fill="purple") + 
-  labs(title = title) +
-  theme(axis.title.x = element_text(size=14), axis.text.x = element_text(size=12))
+#cor.test((pu1_h3k4me1_data %>% filter(significant == 'O'))$beta_pu1, (pu1_h3k4me1_data %>% filter(significant == 'O'))$beta_histone)$estimate
+# 0.9145257 
+#cor.test((pu1_h3k4me1_data %>% filter(significant == 'O'))$beta_pu1, (pu1_h3k4me1_data %>% filter(significant == 'O'))$beta_histone)$p.value
+# 4.023967e-14
 
 
-#### Plotting together
-p_4_aefgi <- p_pu1 + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(breaks = c(0,5,10)) +
-  p_gwas + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1)), breaks = c(0,5,10)) +
-  p_znf608 +
-  p_eqtl + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.15)),breaks = c(0,5,10)) +
-  p_eqtl_cond +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.4))) +
-  p_fm + theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.text.y = element_text(size=12), axis.title.y = element_text(size=14), legend.key.height = unit(0.3,'cm')) +
-  p_bcell_eqtl + theme(axis.text.y = element_text(size=12), axis.title.y = element_text(size=14)) + scale_y_continuous(expand = expansion(mult=c(0.02,0.1)), breaks = c(0,2,4)) +
-  plot_layout(nrow = 7, heights = c(3, 3, 3, 3, 3, 3, 3))
+### Figure 4d Allelic imbalance plot
+pu1_qtl_as <- read.table('../data/Fig4/PU1_QTL_AS_comparison.txt', header = T)
+
+p_qtl_as <- ggplot(pu1_qtl_as, aes(x=beta_as, y=beta_pu1,
+                                   xmin=beta_as - se_as, xmax=beta_as + se_as,
+                                   ymin=beta_pu1 - se_pu1, ymax=beta_pu1 + se_pu1
+                                   )) +
+  geom_point(size = 2, color = '#46ACC8') + geom_errorbar(color = '#46ACC8') + geom_errorbarh(color = '#46ACC8') +
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  scale_alpha_manual(values =c(0.3,1)) +  
+  lims(x=c(-4.5,4.5), y = c(-2,2)) +
+  labs(x="PU.1 ChIP-seq \n allelic imbalance effect", y="PU.1 bQTL effect") +
+  theme_minimal() + 
+  theme(axis.title.x = element_text(size=14), axis.title.y = element_text(size=14),
+        axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+        legend.position="none", aspect.ratio = 1)
+
+#cor.test(pu1_qtl_as_merged$beta_pu1, pu1_qtl_as_merged$beta_as)$estimate
+# 0.9437686 
+#cor.test(pu1_qtl_as_merged$beta_pu1, pu1_qtl_as_merged$beta_as)$p.value
+# 4.156833e-43
 
 
-ggplot2::ggsave('../figures/Fig4aefgi.pdf',
-                plot = p_4_aefgi,
+### Figure 4e PU1 and eQTL
+pu1_eqtl_data <- read.table('../data/Fig4/PU1_eqtl_comparison.txt', header = T)
+
+p_pu1_eqtl <- ggplot(pu1_eqtl_data, aes(x=beta_eqtl, y=beta_pu1,
+                                        xmin=beta_eqtl - se_eqtl, xmax=beta_eqtl + se_eqtl,
+                                        ymin=beta_pu1 - se_pu1, ymax=beta_pu1 + se_pu1
+                                        )) +
+  geom_point(size = 2, color = 'black') + geom_errorbar(color = 'black') + geom_errorbarh(color = 'black') +
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  lims(x = c(-2,2), y=c(-2,2)) +
+  labs(x="eQTL effect", y="PU.1 bQTL effect") +
+  theme_minimal() + 
+  theme(axis.title.x = element_text(size=14), axis.title.y = element_text(size=14),
+        axis.text.x = element_text(size=12), axis.text.y = element_text(size=12),
+        legend.position="none", aspect.ratio = 1)
+
+#cor.test(pu1_eqtl_data$beta_pu1, pu1_eqtl_data$slope)$estimate
+# 0.7971235 
+#cor.test(pu1_eqtl_data$beta_pu1, pu1_eqtl_data$slope)$p.value
+# 4.156833e-43
+
+
+### Putting the panels together
+p_4_top <- p_4a + p_4b + plot_layout(ncol = 2, widths = c(1,2))
+
+p_4_middle <- p_pu1_atac + p_pu1_h3k27ac + p_pu1_h3k4me1 + plot_layout(ncol = 3)
+
+p_4_bottom <- p_qtl_as + theme(plot.margin = unit(c(0,50,0,0), "pt")) +
+  p_pu1_eqtl + plot_layout(ncol = 2)
+
+p_4_all <- plot_grid(p_4_top, p_4_middle, p_4_bottom, nrow = 3, rel_heights = c(1,1,0.95))
+
+ggplot2::ggsave('../figures/Fig4.pdf',
+                plot = p_4_all,
                 device='pdf',
-                width=200, height=210, units="mm")
-
-
-## Figure d
-### Regulatory QTLs
-
-## PU.1 peak
-
-PU1_27777 <- read.csv('../data/Fig4/qtl/PU1_27777.cpm.boxplot.txt', header = T, sep ='\t')
-
-# Adding allele dosage 2 because there were no samples with homozygous alternate alleles
-p_pu1_qtl_4 <- PU1_27777 %>% mutate(genotype = factor(genotype, levels=c("0", "1", "2"))) %>%
-ggplot(aes(x=genotype, y=cpm)) +
- geom_boxplot(fill='#46ACC8', color="black") +
- theme_classic() +
- geom_jitter(shape=16, position=position_jitter(0.1)) +
- labs(y="Read per million", title = "PU.1 ChIP") +
- ylim(0, NA) +
- scale_x_discrete(breaks=factor(0:2), drop = F) +
- theme(plot.title = element_text(size=14),
-       axis.title.x = element_blank(),
-       axis.title.y = element_text(size=12),
-       axis.text.x = element_blank(),
-       axis.text.y = element_text(size=12))
-
-## ATAC peak over PU.1 peak
-
-ATAC_59004 <- read.csv('../data/Fig4/qtl/ATAC_59004.cpm.boxplot.txt', header = T, sep ='\t')
-
-p_atac_qtl_4 <- ggplot(ATAC_59004, aes(x=as.factor(genotype), y=cpm)) +
- geom_boxplot(fill='#5166CC', color="black") +
- theme_classic() +
- geom_jitter(shape=16, position=position_jitter(0.1)) +
- labs(y="Read per million", title = "ATAC") +
- ylim(0, NA) +
- theme(plot.title = element_text(size=14),
-       axis.title.x = element_blank(),
-       axis.title.y = element_text(size=12),
-       axis.text.x = element_blank(),
-       axis.text.y = element_text(size=12))
-
-## H3K4me1
-
-H3K4me1_5 <- read.csv('../data/Fig4/qtl/H3K4me1_5_124340065_124345334.cpm.boxplot.txt', header = T, sep ='\t')
-
-p_h3k4me1_qtl_4 <- ggplot(H3K4me1_5, aes(x=as.factor(genotype), y=cpm)) +
- geom_boxplot(fill='#E7B800', color="black") +
- theme_classic() +
- geom_jitter(shape=16, position=position_jitter(0.1)) +
- labs(y="Read per million", title = "H3K4me1") +
- ylim(0, NA) +
- theme(plot.title = element_text(size=14),
-       axis.title.x = element_blank(),
-       axis.title.y = element_text(size=12),
-       axis.text.x = element_blank(),
-       axis.text.y = element_text(size=12))
-
-## H3K27ac
-
-H3K27ac_5 <- read.csv('../data/Fig4/qtl/H3K27ac_5_124339830_124348198.cpm.boxplot.txt', header = T, sep ='\t')
-
-p_h3k27ac_qtl_4 <- ggplot(H3K27ac_5, aes(x=as.factor(genotype), y=cpm)) +
- geom_boxplot(fill='#009E73', color="black") +
- theme_classic() +
- geom_jitter(shape=16, position=position_jitter(0.1)) +
- labs(y="Read per million", title = "H3K27ac") +
- ylim(0, NA) +
- theme(plot.title = element_text(size=14),
-       axis.title.x = element_blank(),
-       axis.title.y = element_text(size=12),
-       axis.text.x = element_blank(),
-       axis.text.y = element_text(size=12))
-
-
-p_4_d <- p_pu1_qtl_4 +
- p_atac_qtl_4 +
- p_h3k4me1_qtl_4 +
- p_h3k27ac_qtl_4 +
- plot_layout(nrow = 2, ncol = 2, widths = c(1,1), heights = c(1,1))
-
-## Figure 4h  - ZNF608 expression across blood cell types (related to lymphocytes)
-heme_RNA <- read.csv('~/Projects/PU1_gwas/plots/heme_RNA.txt', header = T, sep ='\t', row.names = 1)
-ZNF608_RNA <- transpose((heme_RNA / colSums(heme_RNA) * 10^6)["ZNF608",1:49])
-celltype <- c("HSC", "HSC", "HSC", "HSC", "MPP", "MPP", "MPP", "MPP", "LMPP", "LMPP", "LMPP", "CMP", "CMP", "CMP", "CMP", "GMP", "GMP", "GMP", "GMP", "MEP", "MEP", "MEP", "MEP", "Mono", "Mono", "Mono", "Mono", "CD4T", "CD4T", "CD4T", "CD4T", "CD8T", "CD8T", "CD8T", "CD8T", "NK", "NK", "NK", "NK", "B", "B", "B", "B", "CLP", "CLP", "CLP", "Ery", "Ery", "Ery")
-ZNF608_RNA["celltype"] <- celltype
-
-p_4_h <- ZNF608_RNA %>% filter(celltype %in% c("HSC", "MPP", "LMPP", "CLP",  "B", "CD4T", "CD8T", "NK")) %>%
- mutate(celltype = factor(celltype, levels=c("NK", "CD8T",  "CD4T", "B", "CLP", "LMPP", "MPP", "HSC"))) %>%
- ggplot(aes(x=celltype, y=(V1+0.1), fill=celltype)) +
- geom_boxplot(color="black") + geom_jitter(shape=16, position=position_jitter(0.1)) +
- theme_minimal() +
- labs(y=expression(paste(italic('ZNF608'), " CPM")), x="") +
- scale_fill_manual(values = c("#FF7373", "#FF7373", "#FF7373", "#FF7373", "#E56767", "#B25050", "#7F3939", "#333333")) +
- theme(axis.title.x = element_text(size=16), axis.title.y = element_text(size=14),
-       axis.text.x = element_text(size=14), axis.text.y = element_text(size=14),
-       aspect.ratio = 1.4,
-       legend.position = "none") +
- coord_flip()
-
-
-
-## Plotting Fig4h,i together
-p_4_dh <- cowplot::plot_grid(p_4_d, p_4_h, nrow = 2, rel_heights = c(5,6))
-
-ggplot2::ggsave('../figures/Fig4dh.pdf',
-                plot = p_4_dh,
-                device='pdf',
-                width=105, height=180, units="mm")
+                width=300, height=300, units="mm")
