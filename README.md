@@ -21,6 +21,7 @@ AnnotationDbi
 Ggbio
 GenomicRanges
 locuscomparer
+ComplexUpset
 ```
 
 ### Workflow
