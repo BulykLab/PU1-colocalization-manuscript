@@ -31,7 +31,7 @@ h3k27ac_beta <- cor(h3k27ac_data$genotype, h3k27ac_data$phenotype) * sd(h3k27ac_
 
 
 ### Linear regression for H3K4me1_17_16170245_16172722
-h3k4me1_data <- read.table('~/Library/CloudStorage/GoogleDrive-rjeong@g.harvard.edu/My Drive/Manuscript/PU1_bloodcelltrait/CG_submission/reresubmission/analysis/QTLs/PU1_67321/H3K4me1_17_16170245_16172722.rs74267027.data.txt', header = T)
+h3k4me1_data <- read.table('H3K4me1_17_16170245_16172722.rs74267027.data.txt', header = T)
 
 h3k4me1_p <- cor.test(h3k4me1_data$genotype, h3k4me1_data$phenotype)$p.value
 # 1.241711e-09
