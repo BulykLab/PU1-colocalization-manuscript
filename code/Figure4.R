@@ -27,7 +27,10 @@ p_4a <- ggplot(pu1_qtl_numbers, aes(x=QTL, y=Num)) +
 ### Figure 4b Upset plot
 pu1_upset_input <- read.table('../data/Fig4/QTL_upset_input_wPU1.txt', header = T, sep='\t')
 
-p_4b <-upset(pu1_upset_input, colnames(pu1_upset_input)[2:5], sort_intersections_by='degree',
+colnames(pu1_upset_input) = c("PU1_peak","PU.1 bQTL", "caQTL","H3K27ac hQTL", "H3K4me1 hQTL")
+QTLs <- colnames(pu1_upset_input)[2:5]
+
+p_4b <-upset(pu1_upset_input, QTLs, sort_intersections_by='degree',
               name = "",
               base_annotations=list('Intersection size'=intersection_size(counts=FALSE)),
               sort_sets=FALSE,

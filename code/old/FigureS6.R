@@ -17,6 +17,7 @@ library(patchwork, quietly = T)
 
 rs5827412_gwas <- read.csv('../data/FigS6/rs5827412_gwas.txt', header = T, sep ='\t')
 
+
 p_supp_6_a <- ggplot(rs5827412_gwas, aes(x = beta, xmin=beta-1.96*se, xmax=beta+1.96*se, y= source)) +
   geom_point(fill="gray", color="black", size=2) +
   theme_minimal_vgrid() +
@@ -24,13 +25,17 @@ p_supp_6_a <- ggplot(rs5827412_gwas, aes(x = beta, xmin=beta-1.96*se, xmax=beta+
   scale_x_continuous(expand = expansion(mult = c(0, 0)), limit=c(-0.06,0.06)) +
   theme(axis.title.x = element_text(size=14), axis.title.y = element_blank(),
         axis.text.x = element_text(size=12), axis.text.y = element_text(size=14),
-        aspect.ratio = .3) +
+        aspect.ratio = .7) +
   geom_vline(xintercept=0, size=1) + xlab("Effect size")
 
 ggplot2::ggsave('../figures/FigS6a.pdf',
                 plot = p_supp_6_a,
                 device='pdf',
-                width=150, height=50, units="mm")
+                width=150, height=100, units="mm")
+
+
+
+
 
 
 #### Figure S6b - QTL plots for rs5827412
@@ -38,7 +43,7 @@ ggplot2::ggsave('../figures/FigS6a.pdf',
 ## PU.1 bQTL
 PU1_71930 <- read.csv('../data/FigS6/qtl/PU1_71930.cpm.boxplot.txt', header = F, sep ='\t')
 
-p_pu1_qtl_6 <- ggplot(PU1_71930, aes(x=as.factor(V2), y=V1)) +
+p_pu1_qtl_5 <- ggplot(PU1_71930, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='#46ACC8', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1))+
@@ -53,7 +58,7 @@ p_pu1_qtl_6 <- ggplot(PU1_71930, aes(x=as.factor(V2), y=V1)) +
 ## chromatin accessibility QTL
 ATAC_146492 <- read.csv('../data/FigS6/qtl/ATAC_146492.cpm.boxplot.txt', header = F, sep ='\t')
 
-p_atac_qtl_6 <- ggplot(ATAC_146492, aes(x=as.factor(V2), y=V1)) +
+p_atac_qtl_5 <- ggplot(ATAC_146492, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='#5166CC', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -68,7 +73,7 @@ p_atac_qtl_6 <- ggplot(ATAC_146492, aes(x=as.factor(V2), y=V1)) +
 ## H3K4me1 QTL
 H3K4me1_19 <- read.csv('../data/FigS6/qtl/H3K4me1_19_18511451_18514338.cpm.boxplot.txt', header = F, sep ='\t')
 
-p_h3k4me1_qtl_6 <- ggplot(H3K4me1_19, aes(x=as.factor(V2), y=V1)) +
+p_h3k4me1_qtl_5 <- ggplot(H3K4me1_19, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='#E7B800', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -83,7 +88,7 @@ p_h3k4me1_qtl_6 <- ggplot(H3K4me1_19, aes(x=as.factor(V2), y=V1)) +
 ## H3K27ac QTL
 H3K27ac_19 <- read.csv('../data/FigS6/qtl/H3K27ac_19_18511593_18514423.cpm.boxplot.txt', header = F, sep ='\t')
 
-p_h3k27ac_qtl_6 <- ggplot(H3K27ac_19, aes(x=as.factor(V2), y=V1)) +
+p_h3k27ac_qtl_5 <- ggplot(H3K27ac_19, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='#009E73', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -98,7 +103,7 @@ p_h3k27ac_qtl_6 <- ggplot(H3K27ac_19, aes(x=as.factor(V2), y=V1)) +
 ## LRRC25 eQTL
 LRRC25 <- read.csv('../data/FigS6/qtl/LRRC25.rpkm.boxplot.txt', header = F, sep ='\t')
 
-p_lrrc25_qtl_6 <- ggplot(LRRC25, aes(x=as.factor(V2), y=V1)) +
+p_lrrc25_qtl_5 <- ggplot(LRRC25, aes(x=as.factor(V2), y=V1)) +
   geom_boxplot(fill='darkgray', color="black") +
   theme_classic() +
   geom_jitter(shape=16, position=position_jitter(0.1)) +
@@ -112,11 +117,11 @@ p_lrrc25_qtl_6 <- ggplot(LRRC25, aes(x=as.factor(V2), y=V1)) +
 
 
 ## plotting the panels together
-p_supp_6_b_horizontal <- p_pu1_qtl_6 +
-  p_atac_qtl_6 +
-  p_h3k4me1_qtl_6 +
-  p_h3k27ac_qtl_6 +
-  p_lrrc25_qtl_6 +
+p_supp_6_b_horizontal <- p_pu1_qtl_5 +
+  p_atac_qtl_5 +
+  p_h3k4me1_qtl_5 +
+  p_h3k27ac_qtl_5 +
+  p_lrrc25_qtl_5 +
   plot_layout(ncol = 5, widths = c(1,1,1,1,1))
 
 
@@ -124,76 +129,3 @@ ggplot2::ggsave('../figures/FigS6b.pdf',
                 plot = p_supp_6_b_horizontal,
                 device='pdf',
                 width=250, height=60, units="mm")
-
-
-
-## Figure S6c - PU.1-dependent loss of chromatin accessibility
-
-### Need to run Rscript PU1-colocalization-manuscript/code/analysis/PU1KO_ATAC_analysis.R to generate DESeq2 results file
-
-res_pu1ko <- read.csv('../data/FigS6/pu1ko/res_pu1ko.txt', header = T, sep = '\t')
-
-rs411_ATAC_PU1 <- read.table("../data/FigS6/pu1ko/rs411_ATAC.PU1.bed", header=FALSE)
-rs411_ATAC_noPU1 <- read.table("../data/FigS6/pu1ko/rs411_ATAC.noPU1.bed", header=FALSE)
-
-
-## Plotting
-
-## accessibility at PU.1 binding sites
-p_atac_pu1 <- ggplot(data=res_pu1ko[rownames(res_pu1ko) %in% rs411_ATAC_PU1$V4,]) +
-  geom_hline(yintercept = 0, alpha=0.5, ) +
-  geom_point(aes(x=baseMean, y=log2FoldChange, color=(padj < 0.05)), size = 0.5) +
-  scale_x_continuous(trans='log10', limits = c(1,23000) ) +
-  scale_y_continuous(limits = c(-7.1,7.1) ) +
-  scale_color_manual(values = c("gray", "red")) +
-  theme_classic() +
-  theme(legend.position = 'none', axis.title = element_text(size=14),
-        axis.text = element_text(size=14), plot.title = element_text(size=14)) +
-  labs(x="Mean accessibility", y="log2 fold change", title="With PU.1 binding")
-
-## accessibility at sites without PU.1 binding
-p_atac_nopu1 <- ggplot(data=res_pu1ko[rownames(res_pu1ko) %in% rs411_ATAC_noPU1$V4,]) +
-  geom_hline(yintercept = 0, alpha=0.5, ) +
-  geom_point(aes(x=baseMean, y=log2FoldChange, color=(padj < 0.05)), size = 0.5) +
-  scale_x_continuous(trans='log10', limits = c(1,23000) ) +
-  scale_y_continuous(limits = c(-7.1,7.1) ) +
-  scale_color_manual(values = c("gray", "red")) +
-  theme_classic() +
-  theme(legend.position = 'none', axis.title = element_text(size=14),
-        axis.text = element_text(size=14), plot.title = element_text(size=14)) +
-  labs(x="Mean accessibility", y="log2 fold change", title="No PU.1 binding")
-
-
-p_supp_6c <- p_atac_pu1 +
-  p_atac_nopu1 + plot_layout(ncol = 2, widths = c(1, 1))
-
-ggplot2::ggsave('../figures/FigS6c.pdf',
-                plot = p_supp_6c,
-                device='pdf',
-                width=250, height=80, units="mm")
-
-
-
-#### Figure S6d - LRRC25 expression across all blood cell types
-
-heme_RNA <- read.csv('../data/misc/heme_RNA.txt', header = T, sep ='\t', row.names = 1)
-LRRC25_RNA <- transpose((heme_RNA / colSums(heme_RNA) * 10^6)["LRRC25",1:49])
-celltype <- c("HSC", "HSC", "HSC", "HSC", "MPP", "MPP", "MPP", "MPP", "LMPP", "LMPP", "LMPP", "CMP", "CMP", "CMP", "CMP", "GMP", "GMP", "GMP", "GMP", "MEP", "MEP", "MEP", "MEP", "Mono", "Mono", "Mono", "Mono", "CD4T", "CD4T", "CD4T", "CD4T", "CD8T", "CD8T", "CD8T", "CD8T", "NK", "NK", "NK", "NK", "B", "B", "B", "B", "CLP", "CLP", "CLP", "Ery", "Ery", "Ery")
-LRRC25_RNA["celltype"] <- celltype
-
-p_lrrc25_rna_all <- ggplot(LRRC25_RNA, aes(x=reorder(as.factor(celltype), -V1), y=(V1+0.1), fill=(celltype=='Mono'))) +
-  geom_boxplot(color="black") + geom_jitter(shape=16, position=position_jitter(0.1)) +
-  theme_classic() + scale_y_continuous(trans='log10') +
-  scale_fill_manual(values = c("#B8B4B4", "#FF7373")) +
-  labs(y=expression(paste(italic('LRRC25'), " count per million")), x = "Cell type") +
-  theme(axis.title.x = element_text(size=18),
-        axis.title.y = element_text(size=18),
-        axis.text.x = element_text(size=14),
-        axis.text.y = element_text(size=14),
-        legend.position="none")
-
-
-ggplot2::ggsave('../figures/FigS6d.pdf',
-                plot = p_lrrc25_rna_all,
-                device='pdf',
-                width=250, height=90, units="mm")

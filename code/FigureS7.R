@@ -1,49 +1,123 @@
 library(ggplot2)
+library(cowplot)
+library(data.table)
+library(locuscomparer)
+library(dplyr)
 library(patchwork)
 
-## Figure S7 PU.1-dependent loss of chromatin accessibility
-
-### Need to run Rscript PU1-colocalization-manuscript/code/analysis/PU1KO_ATAC_analysis.R to generate DESeq2 results file
-
-res_pu1ko <- read.csv('../data/FigS7/res_pu1ko.txt', header = T, sep = '\t')
+source("misc/locuscompare_updated.R")
 
 
-rs411_ATAC_PU1 <- read.table("../data/FigS7/rs411_ATAC.PU1.bed", header=FALSE)
-rs411_ATAC_noPU1 <- read.table("../data/FigS7/rs411_ATAC.noPU1.bed", header=FALSE)
+## Figure S9a - Merged association plot
+
+## Lym count GWAS
+lym_count_file = "../data/FigS7/ZC2HC1A.lym_count.metal.txt"
+gwas_stat = read_metal(lym_count_file, marker_col = 'rsid', pval_col = 'pval')
+
+pu1_file = "../data/FigS7/PU1_40678.pu1bqtl.metal.txt"
+pu1_stat = read_metal(pu1_file, marker_col = 'rsid', pval_col = 'pval')
+
+merged_lym = merge(gwas_stat, pu1_stat, by = "rsid", suffixes = c("1", "2"), all = FALSE)
+chr = '8'
+snp = 'rs3808619'
+population = 'EUR'
+
+ld = retrieve_LD(chr, snp, population)
+color = assign_color2(merged_lym$rsid, snp, ld)
+
+shape = ifelse(merged_lym$rsid == snp, 23, 21)
+names(shape) = merged_lym$rsid
+
+size = ifelse(merged_lym$rsid == snp, 3, 2)
+names(size) = merged_lym$rsid
+
+merged_lym$label = ifelse(merged_lym$rsid == snp, merged_lym$rsid, '')
+
+p_supp_7a <- ggplot(merged_lym, aes(x=logp1, y=logp2)) +
+  geom_point(aes(fill = rsid, size = rsid, shape = rsid), alpha = 0.8) +
+  theme_minimal() +
+  scale_fill_manual(values = color, guide = "none") +
+  scale_shape_manual(values = shape, guide = "none") +
+  scale_size_manual(values = size, guide = "none") +
+  xlab(expression(paste(-log[10],"(",italic(p)["Lym count GWAS"],")"))) +
+  ylab(expression(paste(-log[10],"(",italic(p)["PU.1 bQTL"],")"))) +
+  theme(aspect.ratio = 1,
+        axis.title.x = element_text(size=16), axis.text.x = element_text(size=14),
+        axis.title.y = element_text(size=16), axis.text.y = element_text(size=14)) +
+  ggrepel::geom_text_repel(aes(label=label), max.overlaps = Inf) +
+  geom_point(aes(x=merged_lym[merged_lym$rsid ==snp,]$logp1, y=merged_lym[merged_lym$rsid ==snp,]$logp2), shape=23, size=3, fill="purple")
 
 
-## Plotting
 
-## accessibility at PU.1 binding sites
-p_atac_pu1 <- ggplot(data=res_pu1ko[rownames(res_pu1ko) %in% rs411_ATAC_PU1$V4,]) +
-  geom_hline(yintercept = 0, alpha=0.5, ) +
-  geom_point(aes(x=baseMean, y=log2FoldChange, color=(padj < 0.05)), size = 0.5) +
-  scale_x_continuous(trans='log10', limits = c(1,23000) ) +
-  scale_y_continuous(limits = c(-7.1,7.1) ) +
-  scale_color_manual(values = c("gray", "red")) +
-  theme_classic() +
-  theme(legend.position = 'none', axis.title = element_text(size=14),
-        axis.text = element_text(size=14), plot.title = element_text(size=14)) +
-  labs(x="Mean accessibility", y="log2 fold change", title="With PU.1 binding")
+## Figure S9b - Z score plot
 
-## accessibility at sites without PU.1 binding
-p_atac_nopu1 <- ggplot(data=res_pu1ko[rownames(res_pu1ko) %in% rs411_ATAC_noPU1$V4,]) +
-  geom_hline(yintercept = 0, alpha=0.5, ) +
-  geom_point(aes(x=baseMean, y=log2FoldChange, color=(padj < 0.05)), size = 0.5) +
-  scale_x_continuous(trans='log10', limits = c(1,23000) ) +
-  scale_y_continuous(limits = c(-7.1,7.1) ) +
-  scale_color_manual(values = c("gray", "red")) +
-  theme_classic() +
-  theme(legend.position = 'none', axis.title = element_text(size=14),
-        axis.text = element_text(size=14), plot.title = element_text(size=14)) +
-  labs(x="Mean accessibility", y="log2 fold change", title="No PU.1 binding")
+blood_rs3808619_effects <- read.csv('../data/FigS7/blood_rs3808619_effects.txt', header = T, sep='\t')
+
+p_supp_7b <- blood_rs3808619_effects %>% mutate(source = factor(source, levels=c("PU.1 binding", "Lym count", "Lym %", "Mono %", "Neut %", "WBC count"))) %>%
+  ggplot(aes(y = beta / se, x= source)) +
+  geom_col(aes(fill=(beta < 0)), color="black") +
+  theme_classic() + background_grid(major = 'y') +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.05))) +
+  scale_fill_discrete(c("#F8766D", "#00BFC4"))+
+  theme(axis.title.x = element_blank(), axis.title.y = element_text(size=16),
+       axis.text.x = element_text(size=14, angle = 45, hjust=1), axis.text.y = element_text(size=14),
+       legend.position="none", aspect.ratio = 1) +
+  geom_vline(xintercept=0, size=1) + ylab("Z score (rs3808619)")
+
+## Figure S9c - Merged association plot with MS GWAS
+
+ms_2013_file = "../data/FigS7/ZC2HC1A_MS_2013.metal.txt"
+gwas_stat = read_metal(ms_2013_file, marker_col = 'rsid', pval_col = 'pval')
+
+merged_ms = merge(gwas_stat, pu1_stat, by = "rsid", suffixes = c("1", "2"), all = FALSE)
+chr = '8'
+snp = 'rs3808619'
+population = 'EUR'
+
+ld = retrieve_LD(chr, snp, population)
+color = assign_color2(merged_ms$rsid, snp, ld)
+
+shape = ifelse(merged_ms$rsid == snp, 23, 21)
+names(shape) = merged_ms$rsid
+
+size = ifelse(merged_ms$rsid == snp, 3, 2)
+names(size) = merged_ms$rsid
+
+merged_ms$label = ifelse(merged_ms$rsid == snp, merged_ms$rsid, '')
+
+p_supp_7c <- ggplot(merged_ms, aes(x=logp1, y=logp2)) +
+  geom_point(aes(fill = rsid, size = rsid, shape = rsid), alpha = 0.8) +
+  theme_minimal() +
+  scale_fill_manual(values = color, guide = "none") +
+  scale_shape_manual(values = shape, guide = "none") +
+  scale_size_manual(values = size, guide = "none") +
+  xlab(expression(paste(-log[10],"(",italic(p)["MS GWAS"],")"))) +
+  ylab(expression(paste(-log[10],"(",italic(p)["PU.1 bQTL"],")"))) +
+  theme(aspect.ratio = 1,
+        axis.title.x = element_text(size=16), axis.text.x = element_text(size=14),
+        axis.title.y = element_text(size=16), axis.text.y = element_text(size=14)) +
+  ggrepel::geom_text_repel(aes(label=label), max.overlaps = Inf) +
+  geom_point(aes(x=merged_ms[merged_ms$rsid ==snp,]$logp1, y=merged_ms[merged_ms$rsid ==snp,]$logp2), shape=23, size=3, fill="purple")
 
 
 
-p_supp_7 <- p_atac_pu1 +
-  p_atac_nopu1 + plot_layout(ncol = 2, widths = c(1, 1))
+## Figure S9d - Z score plot
+
+MS_rs3808619_effects <- read.csv('../data/FigS7/MS_rs3808619_effects.txt', header = T, sep='\t')
+
+p_supp_7d <- ggplot(MS_rs3808619_effects, aes(y = beta / se, x= source)) +
+ geom_col(fill="#F8766D", color="black") +
+ theme_classic() + background_grid(major = 'y') +
+ scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+ theme(axis.title.x = element_blank(), axis.title.y = element_text(size=16),
+       axis.text.x = element_text(size=14), axis.text.y = element_text(size=14),
+       aspect.ratio = 1) +
+ geom_vline(xintercept=0, size=1) + ylab("Z score (rs3808619)")
+
+
+p_supp_7 <- p_supp_7a + p_supp_7b + p_supp_7c + p_supp_7d + plot_layout(nrow = 2, ncol = 2, widths = c(1,0.5))
 
 ggplot2::ggsave('../figures/FigS7.pdf',
-                plot = p_supp_7,
-                device='pdf',
-                width=250, height=125, units="mm")
+               plot = p_supp_7,
+               device='pdf',
+               width=300, height=300, units="mm")
